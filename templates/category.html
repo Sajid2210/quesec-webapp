@@ -1,0 +1,417 @@
+{% extends 'base.html' %} {% load static %} {% block content %}
+
+<!-- Breadcrumb Section Start -->
+<section class="breadcrumb-section pt-0">
+  <div class="container-fluid-lg">
+    <div class="row">
+      <div class="col-12">
+        <div class="breadcrumb-contain">
+          <h2>{{ category.name }}</h2>
+          <nav>
+            <ol class="breadcrumb mb-0">
+              <li class="breadcrumb-item">
+                <a href="{% url 'home' %}">
+                  <i class="fa-solid fa-house"></i>
+                </a>
+              </li>
+              <li class="breadcrumb-item active">{{ category.name }}</li>
+            </ol>
+          </nav>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- Breadcrumb Section End -->
+
+<!-- Category Slider Section Start -->
+{% if not is_child and child_categories %}
+<section class="section-b-space">
+  <div class="container-fluid-lg">
+    {% for child in child_categories %}
+      <div class="title mt-4 d-flex justify-content-between align-items-center">
+        <a href="{{ child.get_absolute_url }}"><h2 class="mb-0">{{ child.name }}</h2></a>
+      </div>
+
+      <div class="featured-slider arrow-slider">
+        {% with count=0 %}
+        {% for product in slider_products %}
+          {% if product.category == child %}
+            {% if count < 6 %}
+              <div>
+                <div class="product-theme-box">
+                  <div class="img-box ratio_50">
+                    <a href="{{ product.get_absolute_url }}">
+                      <img src="{{ product.image.url }}" class="bg-img" alt="{{ product.name }}" />
+                    </a>
+                  </div>
+                  <div class="content-box">
+                    <div class="top-content">
+                      <a href="{{ product.get_absolute_url }}">
+                        <h5>{{ product.name }}</h5>
+                      </a>
+                      <div class="d-flex align-items-center justify-content-between">
+                        <h6>
+                          in
+                          <a href="{{ product.category.get_absolute_url }}">{{ product.category.name }}</a>
+                        </h6>
+                        <div class="product-rating review-rating">
+                          <ul class="rating">
+                            {% for i in "12345"|slice:":5" %}
+                              <li><i data-feather="star" class="fill"></i></li>
+                            {% endfor %}
+                          </ul>
+                          <span class="content-color">(4.9)</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="bottom-content">
+                      <div>
+                        <h5 class="price">₹{{ product.discount_price }}</h5>
+                        <span>Including tax</span>
+                      </div>
+                      <div class="btn-grp">
+                        <a class="btn" href="{{ product.get_absolute_url }}">Preview</a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {% with count=count|add:1 %}
+              {% endwith %}
+            {% endif %}
+          {% endif %}
+        {% endfor %}
+        {% endwith %}
+      </div>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+<!-- Category Slider Section End -->
+
+<!-- List Section Start -->
+ {% if is_child %}
+<section class="section-b-space shop-section">
+  <div class="container-fluid-lg">
+    <div class="row">
+      <div class="col-12">
+        <div class="show-button">
+          <div class="top-filter-menu-2">
+            <div class="ms-auto d-flex align-items-center">
+              <div class="category-dropdown me-md-3">
+                <h5 class="text-content">Sort By :</h5>
+                <div class="dropdown">
+                  <button
+                    class="dropdown-toggle"
+                    type="button"
+                    id="dropdownMenuButton1"
+                    data-bs-toggle="dropdown"
+                  >
+                    <span>Most Popular</span>
+                    <i class="fa-solid fa-angle-down"></i>
+                  </button>
+                  <ul class="dropdown-menu">
+                    <li>
+                      <a class="dropdown-item" href="?sort=low-to-high">Low - High Price</a>
+                    </li>
+                    <li>
+                      <a class="dropdown-item" href="?sort=high-to-low">High - Low Price</a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Parent Product Grid -->
+        <div class="row g-4">
+          {% for product in products %}
+          <div class="col-xxl-3 col-lg-4 col-sm-6">
+            <div class="product-theme-box">
+              <div class="img-box ratio_50">
+                <a href="{{ product.get_absolute_url }}">
+                  <img src="{{ product.image.url }}" class="bg-img" />
+                </a>
+              </div>
+              <div class="content-box">
+                <div class="top-content">
+                  <a href="{{ product.get_absolute_url }}">
+                    <h5>{{ product.title }}</h5>
+                  </a>
+                  <div class="d-flex align-items-center justify-content-between">
+                    <h6>In <a href="{{ product.category.get_absolute_url }}">{{ product.category.name }}</a></h6>
+                    <div class="product-rating review-rating">
+                      <ul class="rating">
+                        <li><i data-feather="star" class="fill"></i></li>
+                        <li><i data-feather="star" class="fill"></i></li>
+                        <li><i data-feather="star" class="fill"></i></li>
+                        <li><i data-feather="star" class="fill"></i></li>
+                        <li><i data-feather="star"></i></li>
+                      </ul>
+                      <span class="content-color">(4.2)</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="bottom-content">
+                  <div>
+                    <h5 class="price">₹{{ product.discount_price }}</h5>
+                    <span>Including tax</span>
+                  </div>
+                  <div class="btn-grp">
+                    <a class="btn" href="{{ product.get_absolute_url }}">Preview</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+
+        <!-- Pagination -->
+        <nav class="custom-pagination mt-4">
+            <ul class="pagination justify-content-center">
+
+                {% if products.has_previous %}
+                <li class="page-item">
+                <a class="page-link" href="?page={{ products.previous_page_number }}{% if sort_option %}&sort={{ sort_option }}{% endif %}">
+                    <i class="fa-solid fa-angles-left"></i>
+                </a>
+                </li>
+                {% else %}
+                <li class="page-item disabled">
+                <span class="page-link"><i class="fa-solid fa-angles-left"></i></span>
+                </li>
+                {% endif %}
+
+                {% for page_num in products.paginator.page_range %}
+                <li class="page-item {% if products.number == page_num %}active{% endif %}">
+                <a class="page-link" href="?page={{ page_num }}{% if sort_option %}&sort={{ sort_option }}{% endif %}">{{ page_num }}</a>
+                </li>
+                {% endfor %}
+
+                {% if products.has_next %}
+                <li class="page-item">
+                <a class="page-link" href="?page={{ products.next_page_number }}{% if sort_option %}&sort={{ sort_option }}{% endif %}">
+                    <i class="fa-solid fa-angles-right"></i>
+                </a>
+                </li>
+                {% else %}
+                <li class="page-item disabled">
+                <span class="page-link"><i class="fa-solid fa-angles-right"></i></span>
+                </li>
+                {% endif %}
+
+            </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+</section>
+{% elif parent_products and parent_products|length > 0 %}
+<section class="section-b-space shop-section">
+  <div class="container-fluid-lg">
+    <div class="row">
+      <div class="col-12">
+        <div class="show-button">
+          <div class="top-filter-menu-2">
+            <div class="ms-auto d-flex align-items-center">
+              <div class="category-dropdown me-md-3">
+                <h5 class="text-content">Sort By :</h5>
+                <div class="dropdown">
+                  <button
+                    class="dropdown-toggle"
+                    type="button"
+                    id="dropdownMenuButton1"
+                    data-bs-toggle="dropdown"
+                  >
+                    <span>Most Popular</span>
+                    <i class="fa-solid fa-angle-down"></i>
+                  </button>
+                  <ul class="dropdown-menu">
+                    <li>
+                      <a class="dropdown-item" href="?sort=low-to-high">Low - High Price</a>
+                    </li>
+                    <li>
+                      <a class="dropdown-item" href="?sort=high-to-low">High - Low Price</a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Parent Product Grid -->
+        <div class="row g-4">
+          {% for product in products %}
+          <div class="col-xxl-3 col-lg-4 col-sm-6">
+            <div class="product-theme-box">
+              <div class="img-box ratio_50">
+                <a href="{{ product.get_absolute_url }}">
+                  <img src="{{ product.image.url }}" class="bg-img" />
+                </a>
+              </div>
+              <div class="content-box">
+                <div class="top-content">
+                  <a href="{{ product.get_absolute_url }}">
+                    <h5>{{ product.title }}</h5>
+                  </a>
+                  <div class="d-flex align-items-center justify-content-between">
+                    <h6>In <a href="{{ product.category.get_absolute_url }}">{{ product.category.name }}</a></h6>
+                    <div class="product-rating review-rating">
+                      <ul class="rating">
+                        <li><i data-feather="star" class="fill"></i></li>
+                        <li><i data-feather="star" class="fill"></i></li>
+                        <li><i data-feather="star" class="fill"></i></li>
+                        <li><i data-feather="star" class="fill"></i></li>
+                        <li><i data-feather="star"></i></li>
+                      </ul>
+                      <span class="content-color">(4.2)</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="bottom-content">
+                  <div>
+                    <h5 class="price">₹{{ product.discount_price }}</h5>
+                    <span>Including tax</span>
+                  </div>
+                  <div class="btn-grp">
+                    <a class="btn" href="{{ product.get_absolute_url }}">Preview</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+
+        <!-- Pagination -->
+        <nav class="custom-pagination mt-4">
+            <ul class="pagination justify-content-center">
+
+                {% if products.has_previous %}
+                <li class="page-item">
+                <a class="page-link" href="?page={{ products.previous_page_number }}{% if sort_option %}&sort={{ sort_option }}{% endif %}">
+                    <i class="fa-solid fa-angles-left"></i>
+                </a>
+                </li>
+                {% else %}
+                <li class="page-item disabled">
+                <span class="page-link"><i class="fa-solid fa-angles-left"></i></span>
+                </li>
+                {% endif %}
+
+                {% for page_num in products.paginator.page_range %}
+                <li class="page-item {% if products.number == page_num %}active{% endif %}">
+                <a class="page-link" href="?page={{ page_num }}{% if sort_option %}&sort={{ sort_option }}{% endif %}">{{ page_num }}</a>
+                </li>
+                {% endfor %}
+
+                {% if products.has_next %}
+                <li class="page-item">
+                <a class="page-link" href="?page={{ products.next_page_number }}{% if sort_option %}&sort={{ sort_option }}{% endif %}">
+                    <i class="fa-solid fa-angles-right"></i>
+                </a>
+                </li>
+                {% else %}
+                <li class="page-item disabled">
+                <span class="page-link"><i class="fa-solid fa-angles-right"></i></span>
+                </li>
+                {% endif %}
+
+            </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+</section>
+{% endif %}
+<!-- Shop Section End -->
+
+{% endblock %}
+
+{% block modal %}
+  {% include 'models/mobile-fix-menu.html' %}
+{% endblock %}
+
+{% block js %}
+<!-- CollectionPage -->
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"CollectionPage",
+  "@id":"{{ request.build_absolute_uri }}#webpage",
+  "url":"{{ request.build_absolute_uri }}",
+  "name":"{% if category.parent %}{{ category.parent.name }} › {{ category.name }}{% else %}{{ category.name }}{% endif %} — Quesec Rides",
+  "isPartOf":{"@id":"https://www.quesecrides.com/#website"},
+  "inLanguage":"en-IN",
+  "description":"{{ category.meta_description|default:'Explore bicycles and accessories' }}"
+}
+</script>
+
+<!-- BreadcrumbList -->
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"BreadcrumbList",
+  "itemListElement":[
+    { "@type":"ListItem", "position":1, "name":"Home", "item":"https://www.quesecrides.com/" }
+    {% if category.parent %},
+    { "@type":"ListItem", "position":2, "name":"{{ category.parent.name }}", "item":"{{ category.parent.get_absolute_url }}" },
+    { "@type":"ListItem", "position":3, "name":"{{ category.name }}", "item":"{{ category.get_absolute_url }}" }
+    {% else %},
+    { "@type":"ListItem", "position":2, "name":"{{ category.name }}", "item":"{{ category.get_absolute_url }}" }
+    {% endif %}
+  ]
+}
+</script>
+
+<!-- ItemList: Child Categories (if present) -->
+{% if child_categories %}
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"ItemList",
+  "@id":"{{ request.build_absolute_uri }}#child-categories",
+  "name":"Subcategories of {{ category.name }}",
+  "itemListOrder":"http://schema.org/ItemListOrderAscending",
+  "numberOfItems": {{ child_categories|length }},
+  "itemListElement":[
+    {% for cat in child_categories %}
+    { "@type":"ListItem", "position": {{ forloop.counter }}, "name": "{{ cat.name|escapejs }}", "url": "{{ cat.get_absolute_url }}" }{% if not forloop.last %},{% endif %}
+    {% endfor %}
+  ]
+}
+</script>
+{% endif %}
+
+<!-- ItemList: Products (only list items, not full Product schema) -->
+{% if products %}
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"ItemList",
+  "@id":"{{ request.build_absolute_uri }}#products",
+  "name":"Products in {% if category.parent %}{{ category.parent.name }} › {{ category.name }}{% else %}{{ category.name }}{% endif %}",
+  "itemListOrder":"http://schema.org/ItemListOrderAscending",
+  "numberOfItems": {{ products|length }},
+  "itemListElement":[
+    {% for p in products %}
+    {
+      "@type":"ListItem",
+      "position": {{ forloop.counter }},
+      "url": "{{ p.get_absolute_url }}",
+      "name": "{{ p.title|escapejs }}"
+      {% if p.image %},
+      "image": "{{ p.image.url }}"
+      {% endif %}
+    }{% if not forloop.last %},{% endif %}
+    {% endfor %}
+  ]
+}
+</script>
+{% endif %}
+{% endblock %}

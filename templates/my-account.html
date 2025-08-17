@@ -1,0 +1,203 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block og_title %}My Account{% endblock %}
+{% block title %}{{ site_settings.site_name }}{% endblock %}
+{% block og_description %}{{ site_settings.site_description }}{% endblock %}
+{% block description %}{{ site_settings.site_description }}{% endblock %}
+{% block keywords %}{{ site_settings.site_keywords }}{% endblock %}
+
+{% block content %}
+<!-- Breadcrumb Section Start -->
+<section class="breadcrumb-section pt-0">
+    <div class="container-fluid-lg">
+        <div class="row">
+            <div class="col-12">
+                <div class="breadcrumb-contain">
+                    <h2>User Dashboard</h2>
+                    <nav>
+                        <ol class="breadcrumb mb-0">
+                            <li class="breadcrumb-item">
+                                <a href="{% url 'home' %}">
+                                    <i class="fa-solid fa-house"></i>
+                                </a>
+                            </li>
+                            <li class="breadcrumb-item active">User Dashboard</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Breadcrumb Section End -->
+
+<!-- User Dashboard Section Start -->
+<section class="user-dashboard-section section-b-space">
+    <div class="container-fluid-lg">
+        <div class="row">
+            <div class="col-xxl-3 col-lg-4">
+                <div class="dashboard-left-sidebar">
+                    <div class="close-button d-flex d-lg-none">
+                        <button class="close-sidebar">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                    <div class="profile-box">
+                        <div class="profile-contain">
+                            <div class="profile-name">
+                                <h3>{{ request.user.email }}</h3>
+                                <h6 class="text-content">{{ request.user.email }}</h6>
+                            </div>
+                        </div>
+                    </div>
+
+                    <ul class="nav nav-pills user-nav-pills" id="pills-tab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="pills-dashboard-tab" data-bs-toggle="pill"
+                                data-bs-target="#pills-dashboard" type="button"><i data-feather="home"></i>
+                                Dashboard</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="pills-order-tab" data-bs-toggle="pill"
+                                data-bs-target="#pills-order" type="button"><i
+                                    data-feather="shopping-bag"></i>Orders</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link" href="{% url 'logout' %}">
+                                <i data-feather="shield"></i> Logout
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="col-xxl-9 col-lg-8">
+                <button class="btn left-dashboard-show btn-animation btn-md fw-bold d-block mb-4 d-lg-none">Show
+                    Menu</button>
+                <div class="dashboard-right-sidebar">
+                    <div class="tab-content" id="pills-tabContent">
+                        <div class="tab-pane fade show active" id="pills-dashboard" role="tabpanel">
+                            <div class="dashboard-home">
+                                <div class="title d-flex align-items-center gap-2">
+                                    <h2>My Dashboard</h2>
+                                    <span class="badge bg-success ms-2">Total Orders: {{ total_orders|default:"0" }}</span>
+                                </div>
+
+                                <div class="dashboard-user-name">
+                                    <h6 class="text-content">Hello, <b class="text-title">{{ request.user.email }}</b></h6>
+                                    <p class="text-content mb-0">From your dashboard, you can view your recent orders and manage your account.</p>
+                                </div>
+
+                                <div class="total-box mt-3">
+                                    <div class="row g-sm-4 g-3">
+                                        <div class="col-xxl-4 col-lg-6 col-md-4 col-sm-6">
+                                            <div class="total-contain">
+                                                <img src="{% static 'assets/images/svg/order.svg' %}" class="img-1 blur-up lazyload" alt="">
+                                                <img src="{% static 'assets/images/svg/order.svg' %}" class="blur-up lazyload" alt="">
+                                                <div class="total-detail">
+                                                    <h5>Total Orders</h5>
+                                                    <h3>{{ total_orders|default:"0" }}</h3>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="dashboard-title mt-4">
+                                    <h3>Account Information</h3>
+                                </div>
+
+                                <div class="row g-4">
+                                    <div class="col-xxl-12">
+                                        <div class="dashboard-content-title">
+                                            <h4>Contact Information</h4>
+                                        </div>
+                                        <div class="dashboard-detail">
+                                            <h6 class="text-content">{{ request.user.email }}</h6>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Orders Tab -->
+                        <div class="tab-pane fade" id="pills-order" role="tabpanel">
+                            <div class="dashboard-order">
+                                <div class="title">
+                                    <h2>My Orders History</h2>
+                                </div>
+
+                                {% if orders %}
+                                    <div class="order-contain">
+                                        {% for order in orders %}
+                                            <div class="order-box dashboard-bg-box mb-3">
+                                                <div class="order-container">
+                                                    <div class="order-icon">
+                                                        <i data-feather="box"></i>
+                                                    </div>
+                                                    <div class="order-detail">
+                                                        <h4>Order #{{ order.id }}</h4>
+                                                        <div class="small text-muted">
+                                                            {{ order.created_at|date:"M d, Y H:i" }} •
+                                                            Status: Accepted •
+                                                            Amount: ₹{{ order.total_amount|floatformat:2 }}
+                                                        </div>
+                                                        {% if order.coupon_code %}
+                                                            <div class="small text-success">Coupon: {{ order.coupon_code }} ({{ order.coupon_discount }}%)</div>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+
+                                                {% for item in order.items.all %}
+                                                    <div class="product-order-detail">
+                                                        <a href="{{ item.product.get_absolute_url }}" class="order-image">
+                                                            <img src="{{ item.product.image.url }}" class="blur-up lazyload" alt="{{ item.product.title }}"  width="184" height="145">
+                                                        </a>
+
+                                                        <div class="order-wrap">
+                                                            <a href="{{ item.product.get_absolute_url }}">
+                                                                <h3>{{ item.product.title }}</h3>
+                                                            </a>
+                                                            <ul class="product-size">
+                                                                <li>
+                                                                    <div class="size-box">
+                                                                        <h6 class="text-content">Qty :</h6>
+                                                                        <h5>{{ item.quantity }}</h5>
+                                                                    </div>
+                                                                </li>
+                                                                <li>
+                                                                    <div class="size-box">
+                                                                        <h6 class="text-content">Color :</h6>
+                                                                        <h5>{% if item.product.color_2_name %} {{ item.product.color_1_name }} & {{ item.product.color_2_name }} {% else %}{{ item.product.color_1_name }}{% endif %}</h5>
+                                                                    </div>
+                                                                </li>
+                                                                <li>
+                                                                    <div class="size-box">
+                                                                        <h6 class="text-content">Price :</h6>
+                                                                        <h5>₹{{ item.product.discount_price|floatformat:2 }}</h5>
+                                                                    </div>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                {% endfor %}
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    <div class="alert alert-info">No orders found yet. Start shopping and your orders will appear here.</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <!-- /Orders Tab -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- User Dashboard Section End -->
+{% endblock %}
+{% block modal %}
+  {% include 'models/mobile-fix-menu.html' %}
+{% endblock %}

@@ -1,0 +1,477 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block og_title %}{{ site_settings.site_name }}{% endblock %}
+{% block title %}{{ site_settings.site_name }}{% endblock %}
+{% block og_description %}{{ site_settings.site_description }}{% endblock %}
+{% block description %}{{ site_settings.site_description }}{% endblock %}
+{% block keywords %}{{ site_settings.site_keywords }}{% endblock %}
+
+{% block content %}
+    <!-- Home Section Start -->
+    <section class="home-section pt-2 ratio_50">
+      <div class="container-fluid-lg">
+        <div class="row g-4">
+            {% if hero_banner %}
+          <div class="col-xl-9 col-lg-8 ratio_50_1">
+            <div class="home-contain furniture-contain-2">
+                <a href="{{ hero_banner.link }}">
+              <img
+                src="{{ hero_banner.image.url }}"
+                class="bg-img blur-up lazyload"
+                alt=""
+              /></a>
+              
+            </div>
+          </div>
+          {% endif %}
+
+          {% if hero_two_banner %}
+          <div class="col-xl-3 col-lg-4 d-lg-inline-block d-none">
+            <a href="{{ hero_two_banner.link }}">
+            <div class="home-contain h-100 home-furniture">
+              <img
+                src="{{ hero_two_banner.image.url }}"
+                class="bg-img blur-up lazyload"
+                alt="" 
+              />
+            </div></a>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </section>
+    <!-- Home Section End -->
+
+    <!-- Category Section Start -->
+    <section class="category-section-3">
+      <div class="container-fluid-lg">
+        <div class="title">
+          <h2>Shop By Categories</h2>
+        </div>
+        <div class="row">
+          <div class="col-12">
+            <div class="category-slider-1 arrow-slider wow fadeInUp">
+                {% for cat in shop_categories %}
+              <div>
+                <div class="category-box-list">
+                  <a href="{{ cat.url }}" class="category-name">
+                    <h4>{{ cat.name }}</h4>
+                    <h6>{{ cat.total_products }} items</h6>
+                  </a>
+                  <div class="category-box-view">
+                    <a href="{{ cat.url }}">
+                      <img
+                        src="{{ cat.image }}"
+                        class="img-fluid lazyload"
+                        alt="{{ cat.name }}"
+                      />
+                    </a>
+                    <button
+                      onclick="location.href = '{{ cat.url }}';"
+                      class="btn shop-button"
+                    >
+                      <span>Shop Now</span>
+                      <i class="fas fa-angle-right"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- Category Section End -->
+
+    <!-- Bicycle bestseller section start -->
+     {% if best_seller_bicycles %}
+    <section class="section-b-space">
+      <div class="container-fluid-lg">
+        <div class="title">
+          <h2>Best Seller Bicycles</h2>
+        </div>
+        <div class="featured-slider arrow-slider">
+            {% for product in best_seller_bicycles %}
+              <div>
+                <div class="product-theme-box">
+                  <div class="img-box ratio_50">
+                    <a href="{{ product.get_absolute_url }}">
+                      <img
+                        src="{{ product.image.url }}"
+                        class="bg-img"
+                      />
+                    </a>
+                    
+                  </div>
+                  <div class="content-box">
+                    <div class="top-content">
+                      <a href="{{ product.get_absolute_url }}">
+                        <h5>{{ product.name }}</h5>
+                      </a>
+                      <div
+                        class="d-flex align-items-center justify-content-between"
+                      >
+                        <h6>
+                           in
+                          <a href="{{ product.category.get_absolute_url }}">{{ product.display_category }}</a>
+                        </h6>
+                        <div class="product-rating review-rating">
+                          <ul class="rating">
+                            <li>
+                              <i data-feather="star" class="fill"></i>
+                            </li>
+                          </ul>
+
+                          <span class="content-color">({{ product.average_rating }})</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="bottom-content">
+                      <div>
+                        
+                        <h5 class="price">₹{{ product.discount_price }}</h5>
+                        <span>Including tax</span>
+                      </div>
+                      <div class="btn-grp">
+                        <a class="btn" href="{{ product.get_absolute_url }}">Preview</a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+        </div>
+    </section>
+    {% endif %}
+    <!-- feature section end -->
+
+    <!-- Banner Section Start -->
+    <section class="bank-section overflow-hidden">
+      <div class="container-fluid-lg">
+        <div class="title">
+          <h2>Bank & Wallet Offers</h2>
+        </div>
+        <div class="slider-bank-3 arrow-slider slick-height">
+          {% for offer in coupon_offers %}
+          <div>
+            <div class="bank-offer">
+              <div class="bank-header">
+                <div class="bank-left w-100">
+                  <div class="bank-image">
+                    <img
+                      src="{{ offer.image_left.url }}"
+                      class="img-fluid"
+                      alt="{{ offer.title }}"
+                    />
+                  </div>
+                  <div class="bank-name">
+                    <h2 class="bank-offer-2">{{ offer.title }}</h2>
+                    <h5 class="discount text-content">{{ offer.subtitle }}</h5>
+                    <h5 class="valid text-content">{{ offer.validity }}</h5>
+                  </div>
+                </div>
+
+                <div class="bank-right w-100">
+                  <img
+                    src="{{ offer.image_right.url }}"
+                    class="img-fluid"
+                    alt=""
+                  />
+                </div>
+              </div>
+              
+
+              {% if offer.color == "Red" %}
+                <div class="bank-footer bank-footer-1">
+              {% elif offer.color == "Blue" %}
+                <div class="bank-footer bank-footer-2">
+              {% else %}
+                <div class="bank-footer bank-footer-3">
+              {% endif %}
+                <h4>
+                  Code :
+                  <input id="clipboardexample{{ forloop.counter }}" value="{{ offer.coupon_code }}" />
+                </h4>
+                <button class="bank-coupon btn" id="copyText{{ forloop.counter }}">
+                  Copy Code
+                </button>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+
+        </div>
+      </div>
+    </section>
+    <!-- Banner Section End -->
+
+    <!-- Bicycle feature section start -->
+     {% for sec in home_category_sections %}
+    <section class="section-b-space">
+      <div class="container-fluid-lg">
+        <div class="title">
+          <h2>{{ sec.title }}</h2>
+        </div>
+        <div class="featured-slider arrow-slider">
+            {% for product in sec.products %}
+              <div>
+                <div class="product-theme-box">
+                  <div class="img-box ratio_50">
+                    <a href="{{ product.get_absolute_url }}">
+                      <img
+                        src="{{ product.image.url }}"
+                        class="bg-img"
+                      />
+                    </a>
+                    
+                  </div>
+                  <div class="content-box">
+                    <div class="top-content">
+                      <a href="{{ product.get_absolute_url }}">
+                        <h5>{{ product.name }}</h5>
+                      </a>
+                      <div
+                        class="d-flex align-items-center justify-content-between"
+                      >
+                        <h6>
+                           in
+                          <a href="{{ product.category.get_absolute_url }}">{{ product.display_category }}</a>
+                        </h6>
+                        <div class="product-rating review-rating">
+                          <ul class="rating">
+                            <li>
+                              <i data-feather="star" class="fill"></i>
+                            </li>
+                          </ul>
+
+                          <span class="content-color">({{ product.average_rating }})</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="bottom-content">
+                      <div>
+                        
+                        <h5 class="price">₹{{ product.discount_price }}</h5>
+                        <span>Including tax</span>
+                      </div>
+                      <div class="btn-grp">
+                        <a class="btn" href="{{ product.get_absolute_url }}">Preview</a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+        </div>
+    </section>
+    {% endfor %}
+    <!-- feature section end -->
+
+    <!-- Blog Section Start -->
+    <section class="blog-section">
+      <div class="container-fluid-lg">
+        <div class="title">
+          <a href="{% url 'blog:list' %}" class="text-decoration-none"><h2>Blog</h2></a>
+        </div>
+
+        <div class="slider-3 arrow-slider">
+          {% for post in home_blog_posts %}
+          <div>
+            <div class="blog-box ratio_50">
+              <div class="blog-box-image">
+                <a href="{{ post.get_absolute_url }}">
+                  {% if post.cover_image %}
+                  <img
+                    src="{{ post.cover_image.url }}"
+                    class="img-fluid bg-img"
+                    alt="{{ post.title }}"
+                  />
+                  {% else %}
+                  <img
+                    src="{% static 'assets/images/placeholder.jpg' %}"
+                    class="img-fluid bg-img"
+                    alt="{{ post.title }}"
+                  />
+                  {% endif %}
+                </a>
+              </div>
+
+              <div class="blog-detail">
+                <label>{{ post.category.name }}</label>
+                <a href="{{ post.get_absolute_url }}">
+                  <h2>{{ post.title }}</h2>
+                </a>
+                <div class="blog-list">
+                  <span>{% if post.published_at %}{{ post.published_at|date:"M d, Y" }}{% else %}—{% endif %}</span>
+                  <span>By {{ post.author_name }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          {% empty %}
+          <div>
+            <div class="alert alert-info mb-0">No blog posts yet.</div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </section>
+    <!-- Blog Section End -->
+
+    
+
+{% endblock %}
+
+{% block modal %}
+  {% include 'models/mobile-fix-menu.html' %}
+{% endblock %}
+
+{% block js %}
+<!-- Copy clipboard Js -->
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll('.bank-coupon').forEach(function (btn, i) {
+      btn.addEventListener("click", function () {
+        const input = document.getElementById('clipboardexample' + (i + 1));
+        const coupon = input.value;
+
+        // ✅ Fallback-compatible copy method
+        const textarea = document.createElement('textarea');
+        textarea.value = coupon;
+        textarea.setAttribute('readonly', '');
+        textarea.style.position = 'absolute';
+        textarea.style.left = '-9999px';
+        document.body.appendChild(textarea);
+        textarea.select();
+        try {
+          document.execCommand('copy');
+        } catch (err) {
+          console.error('Copy failed', err);
+        }
+        document.body.removeChild(textarea);
+
+        // 🔁 Change button text temporarily
+        const originalText = btn.innerHTML;
+        btn.innerHTML = "Copied!";
+        btn.disabled = true;
+        setTimeout(function () {
+          btn.innerHTML = originalText;
+          btn.disabled = false;
+        }, 2000);
+      });
+    });
+  });
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "OnlineStore",
+  "@id": "https://www.quesecrides.com/#organization",
+  "name": "Quesec Rides",
+  "url": "https://www.quesecrides.com/",
+  "logo": {
+    "@type": "ImageObject",
+    "url": "https://www.quesecrides.com/static/assets/images/logo.png",
+    "width": 512,
+    "height": 512
+  },
+  "sameAs": [
+    "https://www.instagram.com/quesecrides",
+    "https://www.facebook.com/quesecrides",
+    "https://x.com/quesecrides"
+  ],
+  "brand": {
+    "@type": "Brand",
+    "name": "Quesec"
+  },
+  "contactPoint": [{
+    "@type": "ContactPoint",
+    "contactType": "customer service",
+    "telephone": "+91-XXXXXXXXXX",
+    "email": "support@quesecrides.com",
+    "areaServed": "IN",
+    "availableLanguage": ["en", "hi"]
+  }],
+  "hasMerchantReturnPolicy": {
+    "@type": "MerchantReturnPolicy",
+    "@id": "https://www.quesecrides.com/#return-policy"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "@id": "https://www.quesecrides.com/#website",
+  "url": "https://www.quesecrides.com/",
+  "name": "Quesec Rides",
+  "publisher": { "@id": "https://www.quesecrides.com/#organization" },
+  "inLanguage": "en-IN",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://www.quesecrides.com/search/?q={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "MerchantReturnPolicy",
+  "@id": "https://www.quesecrides.com/#return-policy",
+  "url": "https://www.quesecrides.com/return-policy/",
+  "name": "Quesec Rides Return Policy",
+  "merchantReturnDays": 7,
+  "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
+  "returnMethod": "https://schema.org/ReturnByMail",
+  "applicableCountry": "IN",
+  "returnFees": "https://schema.org/FreeReturn",
+  "inStoreReturnsOffered": false
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"ItemList",
+  "@id":"https://www.quesecrides.com/#site-navigation",
+  "name":"Primary Navigation",
+  "itemListElement":[
+    {
+      "@type":"SiteNavigationElement",
+      "position":1,
+      "name":"MTB",
+      "url":"https://www.quesecrides.com/mtb/"
+    },
+    {
+      "@type":"SiteNavigationElement",
+      "position":2,
+      "name":"Hybrid",
+      "url":"https://www.quesecrides.com/hybrid/"
+    },
+    {
+      "@type":"SiteNavigationElement",
+      "position":3,
+      "name":"Electric",
+      "url":"https://www.quesecrides.com/electric/"
+    },
+    {
+      "@type":"SiteNavigationElement",
+      "position":4,
+      "name":"Kids",
+      "url":"https://www.quesecrides.com/kids/"
+    },
+    {
+      "@type":"SiteNavigationElement",
+      "position":5,
+      "name":"Accessories",
+      "url":"https://www.quesecrides.com/accessories/"
+    }
+  ]
+}
+</script>
+{% endblock %}

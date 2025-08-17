@@ -1,0 +1,236 @@
+ {% load static %}
+<!-- Header Start -->
+<header class="pb-md-4 pb-0">
+  <div class="top-nav top-header sticky-header">
+    <div class="container-fluid-lg">
+      <div class="row">
+        <div class="col-12">
+          <div class="navbar-top">
+            <button
+              class="navbar-toggler d-xl-none d-inline navbar-menu-button"
+              type="button"
+              data-bs-toggle="offcanvas"
+              data-bs-target="#primaryMenu"
+            >
+              <span class="navbar-toggler-icon">
+                <i class="fa-solid fa-bars"></i>
+              </span>
+            </button>
+            <a href="{% url 'home' %}" class="web-logo nav-logo">
+              <img
+                src="{{ site_settings.logo.url }}"
+                class="img-fluid blur-up lazyload"
+                alt="{{ site_settings.site_name }}"
+              />
+            </a>
+
+            <div class="middle-box">
+              <div class="search-box">
+                <div class="input-group">
+                  <form action="{% url 'search' %}" method="get" class="d-flex w-100">
+                  <input
+                    type="search"
+                    name="q"
+                    class="form-control"
+                    placeholder="I'm searching for..." required
+                  />
+                  <button class="btn" type="submit" >
+                    <i data-feather="search"></i>
+                  </button>
+                  </form>
+                </div>
+              </div>
+            </div>
+
+            <div class="rightside-box">
+              <div class="search-full">
+                <div class="input-group">
+                  <span class="input-group-text">
+                    <i data-feather="search" class="font-light"></i>
+                  </span>
+                  <input
+                    type="text"
+                    class="form-control search-type"
+                    placeholder="Search here.."
+                  />
+                  <span class="input-group-text close-search">
+                    <i data-feather="x" class="font-light"></i>
+                  </span>
+                </div>
+              </div>
+              <ul class="right-side-menu">
+                <li class="right-side">
+                  <div class="delivery-login-box">
+                    <div class="delivery-icon">
+                      <div class="search-box">
+                        <i data-feather="search"></i>
+                      </div>
+                    </div>
+                  </div>
+                </li>
+                <li class="right-side">
+                  <a href="/contact" class="delivery-login-box">
+                    <div class="delivery-icon">
+                      <i data-feather="phone-call"></i>
+                    </div>
+                  </a>
+                </li>
+
+                <li class="right-side">
+                  <a
+                    href="{% if request.user.is_authenticated %}/my-account{% else %}/login/{% endif %}"
+                    class="btn p-0 position-relative header-wishlist"
+                  >
+                    <i data-feather="user"></i>
+                  </a>
+                </li>
+                <li class="right-side">
+                  <div class="onhover-dropdown header-badge">
+                    <button
+                      type="button"
+                      class="btn p-0 position-relative header-wishlist"
+                    >
+                      <a
+                        href="{% url 'view_cart' %}"
+                        class="delivery-login-box"
+                      >
+                        <i data-feather="shopping-cart"></i>
+                        <span
+                          class="position-absolute top-0 start-100 translate-middle badge"
+                          >{{ request.session.cart|length|default:0 }}
+                          <span class="visually-hidden">unread messages</span>
+                        </span>
+                      </a>
+                    </button>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container-fluid-lg">
+    <div class="row">
+      <div class="col-12">
+        <div class="header-nav">
+          <div class="header-nav-left">
+            <button class="dropdown-category">
+              <i data-feather="align-left"></i>
+              <span>All Categories</span>
+            </button>
+
+            <div class="category-dropdown">
+              <div class="category-title">
+                <h5>Categories</h5>
+                <button type="button" class="btn p-0 close-button text-content">
+                  <i class="fa-solid fa-xmark"></i>
+                </button>
+              </div>
+
+              <ul class="category-list">
+                {% for item in cat_nav3 %} 
+                {% if not item.parent %} 
+                {% if item.is_parent and not item.link %}
+                <!-- Parent Menu with Children (Dropdown style) -->
+                <li class="onhover-category-list">
+                  <a href="javascript:void(0)" class="category-name">
+                    
+                    <h6>{{ item.name }}</h6>
+                    <i class="fa-solid fa-angle-right"></i>
+                  </a>
+
+                  <div class="onhover-category-box">
+                    <div class="list-1">
+                      <div class="category-title-box">
+                        <h5>{{ item.name }}</h5>
+                      </div>
+                      <ul>
+                        {% for child in item.children.all %}
+                        <li>
+                          <a href="{{ child.link }}">{{ child.name }}</a>
+                        </li>
+                        {% endfor %}
+                      </ul>
+                    </div>
+                  </div>
+                </li>
+                {% else %}
+                <!-- Direct Link Menu (No Children) -->
+                <li class="onhover-category-list">
+                  <a href="{{ item.link }}" class="category-name">
+                    
+                    <h6>{{ item.name }}</h6>
+                  </a>
+                </li>
+                {% endif %} 
+                {% endif %} 
+                {% endfor %}
+              </ul>
+            </div>
+          </div>
+
+          <div class="header-nav-middle">
+            <div
+              class="main-nav navbar navbar-expand-xl navbar-light navbar-sticky"
+            >
+              <div
+                class="offcanvas offcanvas-collapse order-xl-2"
+                id="primaryMenu"
+              >
+                <div class="offcanvas-header navbar-shadow">
+                  <h5>Menu</h5>
+                  <button
+                    class="btn-close lead"
+                    type="button"
+                    data-bs-dismiss="offcanvas"
+                  ></button>
+                </div>
+                <div class="offcanvas-body">
+                  <ul class="navbar-nav">
+                    {% for item in nav_menus %} 
+                    {% if not item.parent %} 
+                    {% if item.is_parent and not item.link %}
+                    <!-- Parent Menu with Child Dropdown -->
+                    <li class="nav-item dropdown">
+                      <a
+                        class="nav-link dropdown-toggle"
+                        href="javascript:void(0)"
+                        data-bs-toggle="dropdown"
+                      >
+                        {{ item.name }}
+                      </a>
+                      <ul class="dropdown-menu">
+                        {% for child in item.children.all %}
+                        <li>
+                          <a class="dropdown-item" href="{{ child.link }}"
+                            >{{ child.name }}</a
+                          >
+                        </li>
+                        {% endfor %}
+                      </ul>
+                    </li>
+                    {% else %}
+                    <!-- Regular Menu Link (No dropdown-toggle) -->
+                    <li class="nav-item">
+                      <a class="nav-link" href="{{ item.link }}">
+                        {{ item.name }}
+                      </a>
+                    </li>
+                    {% endif %} 
+                    {% endif %} 
+                    {% endfor %}
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+<!-- Header End -->
+ 

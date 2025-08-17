@@ -1,0 +1,211 @@
+{% load static %}
+<footer class="section-t-space">
+  <div class="container-fluid-lg">
+    <div class="service-section">
+      <div class="row g-3">
+        <div class="col-12">
+          <div class="service-contain">
+            <div class="service-box">
+              <div class="service-image">
+                <img
+                  src="{% static 'assets/svg/delivery.svg' %}"
+                  class="blur-up lazyload"
+                  alt=""
+                />
+              </div>
+
+              <div class="service-detail">
+                <h5>24 Hr Dispatch</h5>
+              </div>
+            </div>
+
+            <div class="service-box">
+              <div class="service-image">
+                <img
+                  src="{% static 'assets/svg/discount.svg' %}"
+                  class="blur-up lazyload"
+                  alt=""
+                />
+              </div>
+
+              <div class="service-detail">
+                <h5>Secure Payment</h5>
+              </div>
+            </div>
+
+            <div class="service-box">
+              <div class="service-image">
+                <img
+                  src="{% static 'assets/svg/market.svg' %}"
+                  class="blur-up lazyload"
+                  alt=""
+                />
+              </div>
+
+              <div class="service-detail">
+                <h5>Pay On Delivery</h5>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="main-footer section-b-space section-t-space">
+      <div class="row g-md-4 g-3">
+        <div class="col-xl-3 col-lg-4 col-sm-6">
+          <div class="footer-logo">
+            <div class="theme-logo">
+              <a href="{% url 'home' %}">
+                <img
+                  src="{{ site_settings.logo.url }}"
+                  class="blur-up lazyload"
+                  alt="{{ site_settings.site_name }}"
+                />
+              </a>
+            </div>
+
+            <div class="footer-logo-contain">
+              <p>{{ site_settings.footer_text }}</p>
+
+              <ul class="address">
+                <li>
+                  <i data-feather="home"></i>
+                  <a href="javascript:void(0)">{{ site_settings.address }}</a>
+                </li>
+                <li>
+                  <i data-feather="mail"></i>
+                  <a href="javascript:void(0)">{{ site_settings.email }}</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
+          <div class="footer-title">
+            <h4>Categories</h4>
+          </div>
+
+          <div class="footer-contain">
+            <ul>
+              {% for item in ft_nav1 %}
+              <li>
+                <a href="{{ item.link }}" class="text-content"
+                  >{{ item.name }}</a
+                >
+              </li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+
+        <div class="col-xl col-lg-2 col-sm-3">
+          <div class="footer-title">
+            <h4>Useful Links</h4>
+          </div>
+
+          <div class="footer-contain">
+            <ul>
+              {% for item in ft_nav2 %}
+              <li>
+                <a href="{{ item.link }}" class="text-content"
+                  >{{ item.name }}</a
+                >
+              </li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+
+        <div class="col-xl-2 col-sm-3">
+          <div class="footer-title">
+            <h4>Help Center</h4>
+          </div>
+
+          <div class="footer-contain">
+            <ul>
+              {% for item in ft_nav3 %}
+              <li>
+                <a href="{{ item.link }}" class="text-content"
+                  >{{ item.name }}</a
+                >
+              </li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+
+        <div class="col-xl-3 col-lg-4 col-sm-6">
+          <div class="footer-title">
+            <h4>Contact Us</h4>
+          </div>
+
+          <div class="footer-contact">
+            <ul>
+              <li>
+                <div class="footer-number">
+                  <i data-feather="phone"></i>
+                  <div class="contact-number">
+                    <h6 class="text-content">Hotline 24/7 :</h6>
+                    <h5>+91 {{ site_settings.phone }}</h5>
+                  </div>
+                </div>
+              </li>
+
+              <li>
+                <div class="footer-number">
+                  <i data-feather="mail"></i>
+                  <div class="contact-number">
+                    <h6 class="text-content">Email Address :</h6>
+                    <h5>{{ site_settings.email }}</h5>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sub-footer section-small-space">
+      <div class="reserve">
+        <h6 class="text-content">©2025 Kai Trading All rights reserved</h6>
+      </div>
+
+      <div class="payment">
+        <img
+          src="{% static 'assets/images/payment/1.png' %}"
+          class="blur-up lazyload"
+          alt=""
+        />
+      </div>
+
+      <div class="social-link">
+        <h6 class="text-content">Stay connected :</h6>
+        <ul>
+          <li>
+            <a href="https://www.facebook.com/" target="_blank">
+              <i class="fa-brands fa-facebook-f"></i>
+            </a>
+          </li>
+          <li>
+            <a href="https://twitter.com/" target="_blank">
+              <i class="fa-brands fa-twitter"></i>
+            </a>
+          </li>
+          <li>
+            <a href="https://www.instagram.com/" target="_blank">
+              <i class="fa-brands fa-instagram"></i>
+            </a>
+          </li>
+          <li>
+            <a href="https://in.pinterest.com/" target="_blank">
+              <i class="fa-brands fa-pinterest-p"></i>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</footer>

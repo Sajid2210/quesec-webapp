@@ -1,0 +1,49 @@
+ {% load static %}
+<!-- mobile fix menu start -->
+<div class="mobile-menu d-md-none d-block mobile-cart">
+  <ul>
+    <li class="active">
+      <a href="{% url 'home' %}">
+        <i class="iconly-Home icli"></i>
+        <span>Home</span>
+      </a>
+    </li>
+    <li>
+      <a href="#search" data-bs-toggle="modal" class="search-box">
+        <i class="iconly-Search icli"></i>
+        <span>Search</span>
+      </a>
+    </li>
+    <li class="mobile-category">
+      <a href="javascript:void(0)">
+        <i class="iconly-Category icli js-link"></i>
+        <span>Category</span>
+      </a>
+    </li>
+    <li>
+      <a href="https://wa.me/7046624986" target="_blank">
+        <img
+          src="{% static 'assets/images/icon/whatsapp.png' %}"
+          class="amazon-icon"
+          alt="Amazon"
+        />
+        <span>Whatsapp</span>
+      </a>
+    </li>
+
+    <li>
+      <a
+        href="https://www.amazon.in/stores/Quesec/page/your-store-link"
+        target="_blank"
+      >
+        <img
+          src="{% static 'assets/images/icon/amazon.png' %}"
+          class="amazon-icon"
+          alt="Amazon"
+        />
+        <span>Amazon</span>
+      </a>
+    </li>
+  </ul>
+</div>
+<!-- mobile fix menu end -->

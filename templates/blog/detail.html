@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+{% load static %}
+
+
+{% block title %}{{ post.title }} | Quesec Rides{% endblock %}
+
+{% block content %}
+<!-- Breadcrumb Section Start -->
+<section class="breadcrumb-section pt-0">
+    <div class="container-fluid-lg">
+        <div class="row">
+            <div class="col-12">
+                <div class="breadcrumb-contain">
+                    <h2>Blog List</h2>
+                    <nav>
+                        <ol class="breadcrumb mb-0">
+                            <li class="breadcrumb-item">
+                                <a href="{% url 'home' %}">
+                                    <i class="fa-solid fa-house"></i>
+                                </a>
+                            </li>
+                            <li class="breadcrumb-item ">
+                                <a href="{% url 'blog:list' %}">Blog</a>
+                            </li>
+                            <li class="breadcrumb-item active">{{ post.title }}</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Breadcrumb Section End -->
+
+<!-- Blog Details Section Start -->
+<section class="blog-section section-b-space">
+    <div class="container-fluid-lg">
+        <div class="row g-sm-4 g-3">
+            <div class="col-xxl-3 col-xl-4 col-lg-5 d-lg-block d-none">
+                <div class="left-sidebar-box">
+                    <div class="accordion left-accordion-box" id="accordionPanelsStayOpenExample">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="panelsStayOpen-headingOne">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#panelsStayOpen-collapseOne">
+                                    Related Posts
+                                </button>
+                            </h2>
+                            <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show">
+                                <div class="accordion-body pt-0">
+                                    <div class="recent-post-box">
+                                      {% for r in related %}
+                                        <div class="recent-box">
+                                            <a href="{{ r.get_absolute_url }}" class="recent-image">
+                                                <img src="{{ r.cover_image.url }}"
+                                                    class="img-fluid blur-up lazyload" alt="{{ r.title }}">
+                                            </a>
+
+                                            <div class="recent-detail">
+                                                <a href="{{ r.get_absolute_url }}">
+                                                    <h5 class="recent-name">{{ r.title }}</h5>
+                                                </a>
+                                                <h6>{{ r.category.name }}</h6>
+                                            </div>
+                                        </div>
+                                      {% empty %}
+                                        <li class="list-group-item">No related posts.</li>
+                                      {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xxl-9 col-xl-8 col-lg-7 ratio_50">
+                <div class="blog-detail-image rounded-3 mb-4">
+                    {% if post.cover_image %}
+                    <img src="{{ post.cover_image.url }}" class="bg-img blur-up lazyload" alt="{{ post.title }}">
+                    {% endif %}
+                    <div class="blog-image-contain">
+                        <ul class="contain-list">
+                            <li>{{ post.category.name }}</li>
+                        </ul>
+                        <h2>{{ post.title }}</h2>
+                        <ul class="contain-comment-list">
+                            <li>
+                                <div class="user-list">
+                                    <i data-feather="user"></i>
+                                    <span>{{ post.author_name }}</span>
+                                </div>
+                            </li>
+                            {% if post.published_at %}
+                            <li>
+                                <div class="user-list">
+                                    <i data-feather="calendar"></i>
+                                    <span>{{ post.published_at|date:"M d, Y" }}</span>
+                                </div>
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="blog-detail-contain">
+                    <p>{{ post.content|linebreaks }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Blog Details Section End -->
+
+{% endblock %}
+{% block modal %}
+  {% include 'models/mobile-fix-menu.html' %}
+{% endblock %}

@@ -1,0 +1,177 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block og_title %}Shop{% endblock %}
+{% block title %}Shop{% endblock %}
+{% block og_description %}{{ site_settings.site_description }}{% endblock %}
+{% block description %}{{ site_settings.site_description }}{% endblock %}
+{% block keywords %}{{ site_settings.site_keywords }}{% endblock %}
+
+{% block content %}
+
+<!-- Breadcrumb Section Start -->
+<section class="breadcrumb-section pt-0">
+  <div class="container-fluid-lg">
+    <div class="row">
+      <div class="col-12">
+        <div class="breadcrumb-contain">
+          <h2>Shop</h2>
+          <nav>
+            <ol class="breadcrumb mb-0">
+              <li class="breadcrumb-item">
+                <a href="{% url 'home' %}">
+                  <i class="fa-solid fa-house"></i>
+                </a>
+              </li>
+              <li class="breadcrumb-item active">Shop</li>
+            </ol>
+          </nav>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- Breadcrumb Section End -->
+
+<!-- Shop Section Start -->
+<section class="section-b-space shop-section">
+  <div class="container-fluid-lg">
+    <div class="row">
+      <div class="col-12">
+        <div class="show-button">
+          <div class="top-filter-menu-2">
+            
+            <div class="ms-auto d-flex align-items-center">
+              <div class="category-dropdown me-md-3">
+                <h5 class="text-content">Sort By :</h5>
+                <!-- Dynamic Sort Dropdown -->
+                <div class="dropdown">
+                  <button
+                    class="dropdown-toggle"
+                    type="button"
+                    id="dropdownMenuButton1"
+                    data-bs-toggle="dropdown"
+                  >
+                    <span>
+                      {% if sort == 'low-to-high' %}Low - High Price
+                      {% elif sort == 'high-to-low' %}High - Low Price
+                      {% elif sort == 'rating' %}Average Rating
+                      {% elif sort == 'a-to-z' %}A - Z Order
+                      {% elif sort == 'z-to-a' %}Z - A Order
+                      {% elif sort == 'off-high' %}% Off - High To Low
+                      {% else %}Most Popular
+                      {% endif %}
+                    </span>
+                    <i class="fa-solid fa-angle-down"></i>
+                  </button>
+                  <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="?sort=popularity">Popularity</a></li>
+                    <li><a class="dropdown-item" href="?sort=low-to-high">Low - High Price</a></li>
+                    <li><a class="dropdown-item" href="?sort=high-to-low">High - Low Price</a></li>
+                    <li><a class="dropdown-item" href="?sort=rating">Average Rating</a></li>
+                    <li><a class="dropdown-item" href="?sort=a-to-z">A - Z Order</a></li>
+                    <li><a class="dropdown-item" href="?sort=z-to-a">Z - A Order</a></li>
+                    <li><a class="dropdown-item" href="?sort=off-high">% Off - High To Low</a></li>
+                  </ul>
+                </div>
+                <!-- /Dynamic Sort Dropdown -->
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row g-4">
+          {% for product in products %}
+          <div class="col-xxl-3 col-lg-4 col-sm-6">
+            <div class="product-theme-box">
+              <div class="img-box ratio_50">
+                <a href="{{ product.get_absolute_url }}">
+                  <img
+                    src="{{ product.image.url }}"
+                    class="bg-img"
+                  />
+                </a>
+              </div>
+              <div class="content-box">
+                <div class="top-content">
+                  <a href="{{ product.get_absolute_url }}">
+                    <h5>{{ product.title }}</h5>
+                  </a>
+                  <div
+                    class="d-flex align-items-center justify-content-between"
+                  >
+                    <h6>
+                      in <a href="{{ product.category.get_absolute_url }}">{{ product.display_category }}</a>
+                    </h6>
+                    <div class="product-rating review-rating">
+                      <ul class="rating">
+                        <li>
+                          <i data-feather="star" class="fill"></i>
+                        </li>
+                      </ul>
+
+                      <span class="content-color">({{ product.average_rating }})</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="bottom-content">
+                  <div>
+                    <h5 class="price">₹{{ product.discount_price }}</h5>
+                    <span>Including tax</span>
+                  </div>
+                  <div class="btn-grp">
+                    <a class="btn" href="{{ product.get_absolute_url }}"
+                      >See Product</a
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          {% empty %}
+          <p>No products available.</p>
+          {% endfor %}
+        </div>
+
+        {% if products.paginator.num_pages > 1 %}
+        <nav class="custom-pagination mt-4">
+          <ul class="pagination justify-content-center">
+
+            <!-- Prev -->
+            <li class="page-item {% if not products.has_previous %}disabled{% endif %}">
+              <a class="page-link"
+                 href="{% if products.has_previous %}?page={{ products.previous_page_number }}&sort={{ sort }}{% else %}javascript:void(0){% endif %}"
+                 tabindex="-1">
+                <i class="fa-solid fa-angles-left"></i>
+              </a>
+            </li>
+
+            <!-- Page Numbers -->
+            {% for num in products.paginator.page_range %}
+              {% if num >= products.number|add:"-2" and num <= products.number|add:"2" %}
+                <li class="page-item {% if products.number == num %}active{% endif %}">
+                  <a class="page-link" href="?page={{ num }}&sort={{ sort }}">{{ num }}</a>
+                </li>
+              {% endif %}
+            {% endfor %}
+
+            <!-- Next -->
+            <li class="page-item {% if not products.has_next %}disabled{% endif %}">
+              <a class="page-link"
+                 href="{% if products.has_next %}?page={{ products.next_page_number }}&sort={{ sort }}{% else %}javascript:void(0){% endif %}">
+                <i class="fa-solid fa-angles-right"></i>
+              </a>
+            </li>
+
+          </ul>
+        </nav>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+<!-- Shop Section End -->
+
+{% endblock %}
+{% block modal %}
+ {% include 'models/mobile-fix-menu.html' %}
+{% endblock %}

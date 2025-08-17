@@ -1,0 +1,240 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block og_title %}Contact Us{% endblock %}
+{% block title %}{{ site_settings.site_name }}{% endblock %}
+{% block og_description %}{{ site_settings.site_description }}{% endblock %}
+{% block description %}{{ site_settings.site_description }}{% endblock %}
+{% block keywords %}{{ site_settings.site_keywords }}{% endblock %}
+
+{% block content %}
+
+<!-- Flash Messages -->
+<div class="container mt-3">
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    {% endfor %}
+  {% endif %}
+</div>
+
+<!-- Breadcrumb Section Start -->
+<section class="breadcrumb-section pt-0">
+  <div class="container-fluid-lg">
+    <div class="row">
+      <div class="col-12">
+        <div class="breadcrumb-contain">
+          <h2>Contact Us</h2>
+          <nav>
+            <ol class="breadcrumb mb-0">
+              <li class="breadcrumb-item">
+                <a href="{% url 'home' %}">
+                  <i class="fa-solid fa-house"></i>
+                </a>
+              </li>
+              <li class="breadcrumb-item active">Contact Us</li>
+            </ol>
+          </nav>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- Breadcrumb Section End -->
+
+<!-- Contact Box Section Start -->
+<section class="contact-box-section">
+  <div class="container-fluid-lg">
+    <div class="row g-lg-5 g-3">
+      <div class="col-lg-6">
+        <div class="left-sidebar-box">
+          <div class="row">
+            <div class="col-xl-12">
+              <div class="contact-image">
+                <img src="{% static 'assets/images/inner-page/contact-us.png' %}"
+                     class="img-fluid blur-up lazyloaded" alt="Contact">
+              </div>
+            </div>
+            <div class="col-xl-12">
+              <div class="contact-title">
+                <h3>Get In Touch</h3>
+              </div>
+
+              <div class="contact-detail">
+                <div class="row g-4">
+                  <div class="col-xxl-6 col-lg-12 col-sm-6">
+                    <div class="contact-detail-box">
+                      <div class="contact-icon">
+                        <i class="fa-solid fa-phone"></i>
+                      </div>
+                      <div class="contact-detail-title">
+                        <h4>Phone</h4>
+                      </div>
+                      <div class="contact-detail-contain">
+                        <p>+91-XXXXXXXXXX</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-xxl-6 col-lg-12 col-sm-6">
+                    <div class="contact-detail-box">
+                      <div class="contact-icon">
+                        <i class="fa-solid fa-envelope"></i>
+                      </div>
+                      <div class="contact-detail-title">
+                        <h4>Email</h4>
+                      </div>
+                      <div class="contact-detail-contain">
+                        <p>support@quesec.com</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-xxl-6 col-lg-12 col-sm-6">
+                    <div class="contact-detail-box">
+                      <div class="contact-icon">
+                        <i class="fa-solid fa-location-dot"></i>
+                      </div>
+                      <div class="contact-detail-title">
+                        <h4>Surat Office</h4>
+                      </div>
+                      <div class="contact-detail-contain">
+                        <p>[Your Address Here]</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-xxl-6 col-lg-12 col-sm-6">
+                    <div class="contact-detail-box">
+                      <div class="contact-icon">
+                        <i class="fa-solid fa-building"></i>
+                      </div>
+                      <div class="contact-detail-title">
+                        <h4>Warehouse</h4>
+                      </div>
+                      <div class="contact-detail-contain">
+                        <p>[Warehouse Address Here]</p>
+                      </div>
+                    </div>
+                  </div>
+                </div><!-- row -->
+              </div><!-- contact-detail -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="title d-xxl-none d-block">
+          <h2>Contact Us</h2>
+        </div>
+
+        <!-- FORM START -->
+        <form method="post" action="" novalidate>
+          {% csrf_token %}
+          <div class="right-sidebar-box">
+            <div class="row">
+              <div class="col-xxl-6 col-lg-12 col-sm-6">
+                <div class="mb-md-4 mb-3 custom-form">
+                  <label class="form-label">First Name</label>
+                  <div class="custom-input">
+                    <input type="text" name="first_name" class="form-control"
+                           value="{{ form.first_name.value|default_if_none:'' }}"
+                           placeholder="Enter First Name" required>
+                    <i class="fa-solid fa-user"></i>
+                  </div>
+                  {% if form.first_name.errors %}
+                    <div class="text-danger small">{{ form.first_name.errors.0 }}</div>
+                  {% endif %}
+                </div>
+              </div>
+
+              <div class="col-xxl-6 col-lg-12 col-sm-6">
+                <div class="mb-md-4 mb-3 custom-form">
+                  <label class="form-label">Last Name</label>
+                  <div class="custom-input">
+                    <input type="text" name="last_name" class="form-control"
+                           value="{{ form.last_name.value|default_if_none:'' }}"
+                           placeholder="Enter Last Name">
+                    <i class="fa-solid fa-user"></i>
+                  </div>
+                  {% if form.last_name.errors %}
+                    <div class="text-danger small">{{ form.last_name.errors.0 }}</div>
+                  {% endif %}
+                </div>
+              </div>
+
+              <div class="col-xxl-6 col-lg-12 col-sm-6">
+                <div class="mb-md-4 mb-3 custom-form">
+                  <label class="form-label">Email Address</label>
+                  <div class="custom-input">
+                    <input type="email" name="email" class="form-control"
+                           value="{{ form.email.value|default_if_none:'' }}"
+                           placeholder="Enter Email Address" required>
+                    <i class="fa-solid fa-envelope"></i>
+                  </div>
+                  {% if form.email.errors %}
+                    <div class="text-danger small">{{ form.email.errors.0 }}</div>
+                  {% endif %}
+                </div>
+              </div>
+
+              <div class="col-xxl-6 col-lg-12 col-sm-6">
+                <div class="mb-md-4 mb-3 custom-form">
+                  <label class="form-label">Phone Number</label>
+                  <div class="custom-input">
+                    <input type="tel" name="phone" class="form-control"
+                           value="{{ form.phone.value|default_if_none:'' }}"
+                           placeholder="Enter Your Phone Number" maxlength="10">
+                    <i class="fa-solid fa-mobile-screen-button"></i>
+                  </div>
+                  {% if form.phone.errors %}
+                    <div class="text-danger small">{{ form.phone.errors.0 }}</div>
+                  {% endif %}
+                </div>
+              </div>
+
+              <div class="col-12">
+                <div class="mb-md-4 mb-3 custom-form">
+                  <label class="form-label">Message</label>
+                  <div class="custom-textarea">
+                    <textarea name="message" class="form-control" rows="6"
+                              placeholder="Enter Your Message" required>{{ form.message.value|default_if_none:'' }}</textarea>
+                    <i class="fa-solid fa-message"></i>
+                  </div>
+                  {% if form.message.errors %}
+                    <div class="text-danger small">{{ form.message.errors.0 }}</div>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-animation btn-md fw-bold ms-auto">Send Message</button>
+          </div>
+        </form>
+        <!-- FORM END -->
+      </div>
+    </div>
+  </div>
+</section>
+<!-- Contact Box Section End -->
+
+<!-- Map Section Start -->
+<section class="map-section">
+  <div class="container-fluid p-0">
+    <div class="map-box">
+      <iframe
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3720.855286124037!2d72.84546972997246!3d21.15815662076424!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be04f4a66952d81%3A0xa05c2e23affbbc24!2sQuesec%20Rides!5e0!3m2!1sen!2sin!4v1754995935264!5m2!1sen!2sin"
+        style="border:0;" allowfullscreen="" loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"></iframe>
+    </div>
+  </div>
+</section>
+<!-- Map Section End -->
+
+{% endblock %}
+{% block modal %}
+  {% include 'models/mobile-fix-menu.html' %}
+{% endblock %}

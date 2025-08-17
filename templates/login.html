@@ -1,0 +1,82 @@
+{% extends 'base.html' %} {% load static %}
+
+{% block og_title %}Login{% endblock%}
+{% block title %}Login{% endblock %}
+{% block og_description %}{{site_settings.site_description }}{% endblock %}
+{% block description %}{{site_settings.site_description }}{% endblock %}
+{% block keywords %}{{site_settings.site_keywords }}{% endblock %}
+
+{% block content %}
+<section class="breadcrumb-section pt-0">
+  <div class="container-fluid-lg">
+    <div class="row">
+      <div class="col-12">
+        <div class="breadcrumb-contain">
+          <h2>Log In</h2>
+          <nav>
+            <ol class="breadcrumb mb-0">
+              <li class="breadcrumb-item">
+                <a href="{% url 'home' %}">
+                  <i class="fa-solid fa-house"></i>
+                </a>
+              </li>
+              <li class="breadcrumb-item active">Log In</li>
+            </ol>
+          </nav>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="log-in-section section-b-space">
+  <div class="container-fluid-lg w-100">
+    <div class="row">
+      <div class="col-xxl-6 col-xl-5 col-lg-6 d-lg-block d-none ms-auto">
+        <div class="image-contain">
+          <img src="{% static 'assets/images/inner-page/sign-up.png' %}" class="img-fluid" alt="Login">
+        </div>
+      </div>
+
+      <div class="col-xxl-4 col-xl-5 col-lg-6 col-sm-8 mx-auto">
+        <div class="log-in-box">
+          <div class="log-in-title">
+            <h3>Welcome</h3>
+            <h4>Log In Your Account</h4>
+          </div>
+
+          {% if messages %}
+            <div>
+              {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} mb-2">{{ message }}</div>
+              {% endfor %}
+            </div>
+          {% endif %}
+
+          <div class="input-box">
+            <form class="row g-4" method="post">
+              {% csrf_token %}
+              <div class="col-12">
+                <div class="form-floating theme-form-floating">
+                  <input type="email" name="email" class="form-control" id="email" placeholder="Email Address" required>
+                  <label for="email">Email Address</label>
+                </div>
+              </div>
+
+              <div class="col-12">
+                <button class="btn btn-animation w-100" type="submit">Send OTP</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-xxl-7 col-xl-6 col-lg-6"></div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block modal %}
+  {% include 'models/mobile-fix-menu.html' %}
+{% endblock %}

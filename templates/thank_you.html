@@ -1,0 +1,133 @@
+{% extends 'base.html' %} {% load static %}
+{% block og_title %}Thank You{% endblock %}
+{% block title %}Thank You{% endblock %}
+{% block og_description %}{{site_settings.site_description }}{% endblock %}
+{% block description %}{{site_settings.site_description }}{% endblock %}
+{% block keywords %}{{site_settings.site_keywords }}{% endblock %}
+
+{% block content %}
+<section class="section-b-space">
+  <div class="container">
+    {% if not order %}
+      <div class="row justify-content-center">
+        <div class="col-lg-8">
+          <div class="alert alert-warning">
+            <h5 class="mb-1">No order found</h5>
+            <p class="mb-0">Aisa lagta hai ke order details missing hain. Please <a href="/checkout/">checkout</a> par wapas jaakar order place karein ya sahi link use karein.</p>
+          </div>
+        </div>
+      </div>
+    {% else %}
+      <div class="row g-4">
+        <!-- Head -->
+        <div class="col-12">
+          <div class="card border-0 shadow-sm">
+            <div class="card-body p-4 d-flex align-items-center gap-3">
+              <img src="{% static 'assets/images/icons/check-circle.svg' %}" width="36" height="36" onerror="this.style.display='none'">
+              <div>
+                <h3 class="mb-1">Thank you, {{ order.name }}! 🎉</h3>
+                <p class="text-muted mb-0">Your order has been placed successfully.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Left: order + items -->
+        <div class="col-lg-8">
+          <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-white"><h5 class="mb-0">Order Details</h5></div>
+            <div class="card-body">
+              <div class="row gy-2">
+                <div class="col-sm-6 d-flex justify-content-between"><span class="text-muted">Order #</span><strong>{{ order.id }}</strong></div>
+                <div class="col-sm-6 d-flex justify-content-between"><span class="text-muted">Placed On</span><strong>{{ order.created_at|date:"d M Y, h:i A" }}</strong></div>
+                <div class="col-sm-6 d-flex justify-content-between"><span class="text-muted">Payment Method</span><strong class="text-uppercase">{{ payment_label }}</strong></div>
+                <div class="col-sm-6 d-flex justify-content-between"><span class="text-muted">Payment Status</span><strong>{{ order.payment_status }}</strong></div>
+                {% if order.transaction_id %}
+                <div class="col-sm-6 d-flex justify-content-between"><span class="text-muted">Transaction ID</span><strong>{{ order.transaction_id }}</strong></div>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+
+          <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+              <h5 class="mb-0">Items</h5>
+              <span class="badge bg-light text-dark">{{ items|length }} item(s)</span>
+            </div>
+            <div class="card-body">
+              {% if items %}
+              <div class="table-responsive">
+                <table class="table align-middle">
+                  <thead>
+                    <tr><th>Product</th><th class="text-center">Qty</th><th class="text-end">Price</th><th class="text-end">Total</th></tr>
+                  </thead>
+                  <tbody>
+                    {% for it in items %}
+                      <tr>
+                        <td>
+                          <div class="d-flex align-items-center gap-3">
+                            {% if it.image %}<img src="{{ it.image }}" width="52" height="52" class="rounded" style="object-fit:cover">{% endif %}
+                            <div>
+                              <div class="fw-semibold">{{ it.title }}</div>
+                              {% if it.sku %}<div class="text-muted small">SKU: {{ it.sku }}</div>{% endif %}
+                            </div>
+                          </div>
+                        </td>
+                        <td class="text-center">{{ it.qty }}</td>
+                        <td class="text-end">₹{{ it.price|floatformat:2 }}</td>
+                        <td class="text-end">₹{{ it.total|floatformat:2 }}</td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+              {% else %}
+                <p class="text-muted mb-0">No items found.</p>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: address + summary -->
+        <div class="col-lg-4">
+          <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-white"><h5 class="mb-0">Shipping Address</h5></div>
+            <div class="card-body small">
+              <div class="fw-semibold">{{ order.name }}</div>
+              {% if order.phone %}<div>+91 {{ order.phone }}</div>{% endif %}
+              {% if order.email %}<div>{{ order.email }}</div>{% endif %}
+              <hr class="my-2">
+              <div>
+                {{ order.address }}<br>
+                {{ order.city }} - {{ order.pincode }}<br>
+                {{ order.state }}
+                {% if order.company %}<br>Company: {{ order.company }}{% endif %}
+                {% if order.gst %}<br>GST: {{ order.gst }}{% endif %}
+              </div>
+            </div>
+          </div>
+
+          <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white"><h5 class="mb-0">Order Summary</h5></div>
+            <div class="card-body">
+              <div class="d-flex justify-content-between mb-2"><span class="text-muted">Subtotal</span><strong>₹{{ totals.subtotal|floatformat:2 }}</strong></div>
+              {% if order.coupon_code %}
+              <div class="d-flex justify-content-between mb-2"><span class="text-muted">Coupon ({{ order.coupon_code }} - {{ order.coupon_discount }}%)</span><strong>-₹{{ totals.coupon_value|floatformat:2 }}</strong></div>
+              {% endif %}
+              <div class="d-flex justify-content-between mb-2"><span class="text-muted">Shipping</span><strong>{% if totals.shipping_total > 0 %}₹{{ totals.shipping_total|floatformat:2 }}{% else %}Free{% endif %}</strong></div>
+              <hr>
+              <div class="d-flex justify-content-between"><span class="fw-semibold">Grand Total</span><strong class="fs-5">₹{{ order.total_amount|floatformat:2 }}</strong></div>
+              {% if payment_label|lower|slice:":3" == "cod" and totals.advance_amount %}
+              <div class="alert alert-info mt-3 mb-0">COD (20% Prepay): ₹{{ totals.advance_amount|floatformat:2 }} paid online. Balance will be collected on delivery.</div>
+              {% endif %}
+            </div>
+          </div>
+
+          <a href="/shop/" class="btn btn-dark w-100 mt-3">Continue Shopping</a>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}
+{% block modal %}{% include 'models/mobile-fix-menu.html' %}{% endblock %}

@@ -1,0 +1,18 @@
+{% block og_title %}{{ site_settings.site_name }}{% endblock %}
+{% block title %}{{ site_settings.site_name }}{% endblock %}
+{% block og_description %}{{ site_settings.site_description }}{% endblock %}
+{% block description %}{{ site_settings.site_description }}{% endblock %}
+{% block keywords %}{{ site_settings.site_keywords }}{% endblock %}
+
+{% block content %}
+<section class="container py-5 text-center">
+    <h1>Something went wrong</h1>
+    <p class="text-muted">We’re fixing it. Please try again.</p>
+    <a href="/healthz" class="btn btn-primary mt-3">Check server health</a>
+    <a href="/" class="btn btn-outline-secondary mt-3">Go Home</a>
+</section>
+{% endblock %}
+
+{% block modal %}
+  {% include 'models/mobile-fix-menu.html' %}
+{% endblock %}

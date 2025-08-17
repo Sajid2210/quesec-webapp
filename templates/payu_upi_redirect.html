@@ -1,0 +1,44 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Redirecting to PayU (UPI)…</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body { font-family: system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,'Helvetica Neue',Arial; }
+    .wrap { max-width: 560px; margin: 14vh auto; text-align: center; }
+    .card { border: 1px solid #e6e6e6; border-radius: 12px; padding: 28px; }
+    .muted { color: #666; font-size: 14px; }
+    .spinner { width: 36px; height: 36px; border: 4px solid #e5e5e5; border-top-color: #111; border-radius: 50%; margin: 16px auto; animation: spin 1s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body onload="document.forms['payuUPIForm'].submit();">
+  <div class="wrap">
+    <div class="card">
+      <h2>Redirecting to PayU UPI</h2>
+      <div class="spinner"></div>
+      <p class="muted">Please wait… opening secure UPI page (Google Pay / PhonePe / Paytm)</p>
+    </div>
+  </div>
+
+  <form id="payuUPIForm" name="payuUPIForm" action="{{ payu_url }}" method="post">
+    <input type="hidden" name="key" value="{{ payu_key }}">
+    <input type="hidden" name="txnid" value="{{ txnid }}">
+    <input type="hidden" name="amount" value="{{ amount }}">
+    <input type="hidden" name="productinfo" value="{{ productinfo }}">
+    <input type="hidden" name="firstname" value="{{ name }}">
+    <input type="hidden" name="email" value="{{ email }}">
+    <input type="hidden" name="phone" value="{{ phone }}">
+    <input type="hidden" name="surl" value="{{ surl }}">
+    <input type="hidden" name="furl" value="{{ furl }}">
+    <input type="hidden" name="hash" value="{{ payu_hash }}">
+
+    <!-- UPI-only enforcement -->
+    <input type="hidden" name="pg" value="{{ pg }}">
+    <input type="hidden" name="bankcode" value="{{ bankcode }}">
+    <input type="hidden" name="enforce_paymethod" value="{{ enforce_paymethod }}">
+  </form>
+</body>
+</html>

@@ -1,0 +1,898 @@
+{% extends 'base.html' %} {% load static %} {% block og_title %}
+Cart{% endblock %} {% block title %}
+Cart{% endblock %} {% block og_description %}
+{{site_settings.site_description }}{% endblock %} {% block description %}
+{{site_settings.site_description }}{% endblock %} {% block keywords %}
+{{site_settings.site_keywords }}{% endblock %} {% block content %}
+
+<!-- Breadcrumb Section Start -->
+<section class="breadcrumb-section pt-0">
+  <div class="container-fluid-lg">
+    <div class="row">
+      <div class="col-12">
+        <div class="breadcrumb-contain">
+          <h2>Checkout</h2>
+          <nav>
+            <ol class="breadcrumb mb-0">
+              <li class="breadcrumb-item">
+                <a href="{% url 'home' %}">
+                  <i class="fa-solid fa-house"></i>
+                </a>
+              </li>
+              <li class="breadcrumb-item active">Checkout</li>
+            </ol>
+          </nav>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- Breadcrumb Section End -->
+
+<!-- Checkout section Start -->
+<section class="checkout-section-2 section-b-space">
+    <div class="container-fluid-lg">
+      <div class="row g-sm-4 g-3">
+        <form id="checkout-form" method="post" action="#">
+        {% csrf_token %}
+          <div id="address-section" style="display: block">
+            <div class="col-lg-12">
+              <div class="left-sidebar-checkout">
+                <div class="checkout-detail-box">
+                  <ul>
+                    <li>
+                      <div class="checkout-box">
+                        <div class="checkout-title">
+                          <h4>Shipping & Billing Address</h4>
+                        </div>
+
+                        <div class="checkout-detail">
+                          <div
+                            class="accordion accordion-flush custom-accordion"
+                            id="accordionFlushExample"
+                          >
+                            <div class="accordion-item">
+                              <br />
+
+                              <!-- Make this div always visible by removing 'collapse' and 'collapsed' classes -->
+                              <div class="accordion-collapse show">
+                                <div class="accordion-body">
+                                  <div class="row g-2">
+                                    <div class="col-12">
+                                      <div class="payment-method">
+                                        <div
+                                          class="form-floating mb-lg-3 mb-2 theme-form-floating"
+                                        >
+                                          <input
+                                            type="text"
+                                            name="name"
+                                            class="form-control"
+                                            placeholder="Full Name *"
+                                          />
+                                          <label>Full Name *</label>
+                                        </div>
+                                      </div>
+                                    </div>
+
+                                    <div class="col-xxl-6">
+                                      <div
+                                        class="form-floating mb-lg-3 mb-2 theme-form-floating"
+                                      >
+                                        <input
+                                          type="tel"
+                                          name="phone"
+                                          class="form-control"
+                                          placeholder="Phone Number *"
+                                        />
+                                        <label>Phone Number *</label>
+                                      </div>
+                                    </div>
+
+                                    <div class="col-xxl-6">
+                                      <div
+                                        class="form-floating mb-lg-3 mb-2 theme-form-floating"
+                                      >
+                                        <input
+                                          type="email"
+                                          name="email"
+                                          class="form-control"
+                                          placeholder="Email *"
+                                        />
+                                        <label>Email *</label>
+                                      </div>
+                                    </div>
+
+                                    <div class="col-12">
+                                      <div class="payment-method">
+                                        <div
+                                          class="form-floating mb-lg-3 mb-2 theme-form-floating"
+                                        >
+                                          <input
+                                            type="text"
+                                            name="address"
+                                            class="form-control"
+                                            placeholder="Complete Address *"
+                                          />
+                                          <label>Complete Address *</label>
+                                        </div>
+                                      </div>
+                                    </div>
+
+                                    <div class="col-xxl-6">
+                                      <div
+                                        class="form-floating mb-lg-3 mb-2 theme-form-floating"
+                                      >
+                                        <input
+                                          type="text"
+                                          name="pincode"
+                                          id="pincode"
+                                          maxlength="6"
+                                          class="form-control"
+                                          placeholder="Pincode *"
+                                        />
+                                        <label>Pincode *</label>
+                                      </div>
+                                    </div>
+
+                                    <div class="col-xxl-6">
+                                      <div
+                                        class="form-floating mb-lg-3 mb-2 theme-form-floating"
+                                      >
+                                        <input
+                                          type="text"
+                                          name="city"
+                                          id="city"
+                                          class="form-control"
+                                          placeholder="City *"
+                                        />
+                                        <label>City *</label>
+                                      </div>
+                                    </div>
+
+                                    <div class="col-12">
+                                      <div class="payment-method">
+                                        <div
+                                          class="form-floating mb-lg-3 mb-2 theme-form-floating"
+                                        >
+                                          <input
+                                            type="text"
+                                            name="state"
+                                            id="state"
+                                            class="form-control"
+                                            placeholder="State *"
+                                          />
+                                          <label>State *</label>
+                                        </div>
+                                      </div>
+                                    </div>
+
+                                    <div class="button-group mt-0">
+                                      <ul>
+                                        <li>
+                                          <button
+                                            class="btn btn-animation"
+                                            id="save-and-pay-btn"
+                                          >
+                                            Save & Pay
+                                          </button>
+                                        </li>
+                                      </ul>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                              <!-- accordion-collapse show -->
+                            </div>
+                            <!-- accordion-item -->
+                          </div>
+                          <!-- accordion -->
+                        </div>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div id="payment-section" style="display: none">
+            <div class="row">
+              <div class="col-lg-8">
+                <div class="left-sidebar-checkout">
+                  <div class="checkout-detail-box">
+                    <ul>
+                      <li>
+                        <div class="checkout-box">
+                          <div class="checkout-title">
+                            <h4>Your Added Delivery Address</h4>
+                          </div>
+                          <div class="checkout-detail">
+                            <div class="row g-4">
+                              <div class="col-xxl-6 col-lg-12 col-md-6">
+                                <div class="delivery-address-box">
+                                  <div>
+
+                                    <div class="label">
+                                      <label style="cursor:pointer; color: #ffffff;" id="edit-address">Edit</label>
+                                    </div>
+
+                                    <ul class="delivery-address-detail">
+                                      <li>
+                                        <h4 class="fw-500" id="display-name"></h4>
+                                      </li>
+
+                                      <li>
+                                        <p class="text-content">
+                                          <span class="text-title">Address :</span>
+                                          <span id="display-address"></span>
+                                        </p>
+                                      </li>
+
+                                      <li>
+                                        <h6 class="text-content">
+                                          <span class="text-title">Pin Code :</span>
+                                          <span id="display-pincode"></span>
+                                        </h6>
+                                      </li>
+
+                                      <li>
+                                        <h6 class="text-content mb-0">
+                                          <span class="text-title">Phone :</span> 
+                                          <span id="display-phone"></span>
+                                        </h6>
+                                      </li>
+                                    </ul>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </li>
+                      <li>
+                        <div class="checkout-box">
+                          <div class="checkout-title">
+                            <h4>Payment Option</h4>
+                          </div>
+
+                          <div class="checkout-detail">
+                            <style>
+                              /* 🔥 Kill the outer rounded shell completely */
+                              .custom-accordion .accordion-item,
+                              .custom-accordion .accordion-header,
+                              .custom-accordion .accordion-button,
+                              .custom-accordion .accordion-collapse{
+                                background: transparent !important;
+                                border: 0 !important;
+                                border-radius: 0 !important;
+                                box-shadow: none !important;
+                                padding: 0 !important;
+                                overflow: visible !important; /* bullet clip fix */
+                              }
+
+                              /* ✅ Pill card + outside bullet */
+                              .pay-item{ position:relative; display:block; overflow:visible; }
+
+                              /* Hide native radio (hum custom bullet dikhayenge) */
+                              .pay-input{ position:absolute; opacity:0; width:0; height:0; }
+
+                              /* Outside green bullet — perfectly centered */
+                              .pay-bullet{
+                                position:absolute;
+                                left:-18px;                   /* bullet outside */
+                                top:50%; transform:translateY(-50%);
+                                width:16px; height:16px; border-radius:50%;
+                                border:3px solid #00a859; background:#fff;
+                                box-shadow:0 2px 8px rgba(0,0,0,.12);
+                                z-index:3;
+                              }
+                              .pay-input:checked + .pay-bullet{ background:#00a859; }
+
+                              /* Pill itself (single clean block) */
+                              .pay-card{
+                                position:relative;
+                                background:#fff;
+                                border:1px solid #eef1f5;
+                                border-radius:20px;           /* more round = outdoors feel */
+                                box-shadow:0 2px 10px rgba(0,0,0,.06);
+                                padding:14px 16px;            /* thoda upar-tight */
+                                margin:6px 0;                 /* rows spacing */
+                              }
+
+                              /* Selected state — subtle green outline */
+                              .pay-input:checked ~ .pay-card{
+                                border-color:#00a859;
+                                box-shadow:0 2px 12px rgba(0,168,89,.14);
+                              }
+
+                              /* Inside layout */
+                              .pay-row{ display:flex; align-items:center; justify-content:space-between; gap:10px; }
+                              .pay-left{ display:flex; align-items:center; gap:10px; }
+                              .pay-left img{ height:22px; }
+                              .pay-right{ display:flex; align-items:center; }
+                              .pay-right img{ height:18px; margin-left:6px; opacity:.9; }
+                              .pay-title{ font-weight:700; font-size:15px; line-height:1.2; }
+
+                              /* 📱 Mobile tweaks */
+                              @media (max-width:576px){
+                                .pay-bullet{ left:-16px; width:14px; height:14px; border-width:3px; }
+                                .pay-card{ padding:12px 14px; border-radius:18px; }
+                                .pay-left img{ height:20px; }
+                                .pay-right img{ height:16px; margin-left:4px; }
+                                .pay-title{ font-size:14px; }
+                              }
+
+                              /* COD ke liye chevron button */
+                              .pay-toggle{
+                                border:0; background:transparent; color:#64748b;
+                                padding:0 2px; line-height:1; display:inline-flex; align-items:center; justify-content:center;
+                              }
+                              .pay-toggle .chev{ transition:transform .2s ease; }
+                              .pay-toggle[aria-expanded="true"] .chev{ transform:rotate(180deg); }
+
+                              /* COD detail box */
+                              .cod-info{
+                                border-left:3px solid #e2e8f0;
+                                margin:6px 0 12px 22px;  /* bullet se spacing */
+                                padding:8px 0 8px 12px;
+                                font-size:.92rem;
+                                color:#6b7280;
+                              }
+                            </style>
+
+                            <div class="accordion accordion-flush custom-accordion" id="accordionFlushExample">
+                              
+                              <!-- 1) UPI (PayU) — TOP -->
+                              <div class="accordion-item">
+                                <div class="accordion-header">
+                                  <div class="accordion-button">
+                                    <label class="pay-item w-100" for="pay_payu_upi">
+                                      <input class="pay-input" type="radio" name="payment_method" value="payu_upi" id="pay_payu_upi" checked>
+                                      <span class="pay-bullet"></span>
+                                      <div class="pay-card">
+                                        <div class="pay-row">
+                                          <div class="pay-left">
+                                            <img src="{% static 'assets/images/payment_icons/upi.svg' %}" alt="UPI">
+                                            <span class="pay-title">Pay With UPI</span>
+                                          </div>
+                                          <div class="pay-right">
+                                            <img src="{% static 'assets/images/payment_icons/gpay.svg' %}" alt="GPay">
+                                            <img src="{% static 'assets/images/payment_icons/phonepe.svg' %}" alt="PhonePe">
+                                            <img src="{% static 'assets/images/payment_icons/paytm.svg' %}" alt="Paytm">
+                                            <span class="text-muted ms-1">&amp; More</span>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </label>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <!-- 2) Razorpay (Full Online) -->
+                              <div class="accordion-item">
+                                <div class="accordion-header">
+                                  <div class="accordion-button">
+                                    <label class="pay-item w-100" for="pay_full">
+                                      <input class="pay-input" type="radio" name="payment_method" value="full" id="pay_full">
+                                      <span class="pay-bullet"></span>
+                                      <div class="pay-card">
+                                        <div class="pay-row">
+                                          <div class="pay-left">
+                                            <img src="{% static 'assets/images/payment_icons/razorpay.svg' %}" alt="Razorpay">
+                                            <span class="pay-title">Pay With Razorpay</span>
+                                          </div>
+                                          <div class="pay-right">
+                                            <span class="text-muted">UPI / Card / Netbanking / EMI</span>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </label>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <!-- 3) PayU (All Methods) -->
+                              <div class="accordion-item">
+                                <div class="accordion-header">
+                                  <div class="accordion-button">
+                                    <label class="pay-item w-100" for="pay_payu">
+                                      <input class="pay-input" type="radio" name="payment_method" value="payu" id="pay_payu">
+                                      <span class="pay-bullet"></span>
+                                      <div class="pay-card">
+                                        <div class="pay-row">
+                                          <div class="pay-left">
+                                            <img src="{% static 'assets/images/payment_icons/payu.svg' %}" alt="PayU">
+                                            <span class="pay-title">Pay With PayU</span>
+                                          </div>
+                                          <div class="pay-right">
+                                            <span class="text-muted">UPI / Card / Netbanking</span>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </label>
+                                  </div>
+                                </div>
+                              </div>
+                              <!-- 4) COD — LAST -->
+                              <div class="accordion-item">
+                                <div class="accordion-header">
+                                  <div class="accordion-button">
+                                    <label class="pay-item w-100" for="pay_cod">
+                                      <input class="pay-input" type="radio" name="payment_method" value="cod" id="pay_cod">
+                                      <span class="pay-bullet"></span>
+
+                                      <div class="pay-card">
+                                        <div class="pay-row">
+                                          <div class="pay-left">
+                                            <img src="{% static 'assets/images/payment_icons/cod.svg' %}" alt="COD">
+                                            <span class="pay-title">COD (20% Prepay)</span>
+                                          </div>
+
+                                          <div class="pay-right">
+                                            <span class="text-muted me-2">Pay 20% now, rest COD</span>
+
+                                            <!-- dropdown toggle (sirf COD me) -->
+                                            <button class="pay-toggle" type="button"
+                                                    data-bs-toggle="collapse" data-bs-target="#codCollapse"
+                                                    aria-expanded="false" aria-controls="codCollapse"
+                                                    onclick="event.stopPropagation();">
+                                              <i class="fa-solid fa-chevron-down chev"></i>
+                                            </button>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </label>
+                                  </div>
+                                </div>
+                                <!-- dropdown body -->
+                                <div id="codCollapse" class="collapse">
+                                  <div class="cod-info">
+                                    <p class="mb-0">
+                                      Pay <b>20% now</b> online and the rest of the amount will be paid in cash on delivery.
+                                      If your order gets cancelled for any reason, you will receive a refund.
+                                    </p>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-4">
+                  <div class="right-side-summery-box">
+                      <div class="summery-box-2">
+                          <div class="summery-header">
+                              <h3>Order Summery</h3>
+                          </div>
+
+                          <ul class="summery-contain">
+                            {% for item in cart_items %}
+                              <li>
+                                  <img src="{{ item.product.image.url }}"
+                                      class="img-fluid blur-up lazyloaded checkout-image" alt="">
+                                  <h4>{{ item.product.sku }} <span>X {{ item.qty }}</span></h4>
+                                  <h4 class="price">₹{{ item.product_total_price|floatformat:2 }}</h4>
+                              </li>
+                            {% endfor %}
+                          </ul>
+
+                          <ul class="summery-total">
+                              <li>
+                                  <h4>Product Total</h4>
+                                  <h4 class="price">₹{{ cart_total |floatformat:2 }}</h4>
+                              </li>
+                              <li>
+                                <h4>Product Discount</h4>
+                                <h4 class="price">(-) ₹{{ product_discount|floatformat:2 }}</h4>
+                              </li>
+                              <li>
+                                  <h4>Subtotal</h4>
+                                  <h4 class="price">₹{{ subtotal|floatformat:2 }}</h4>
+                              </li>
+                              {% if coupon_discount > 0 %}
+                              <li>
+                                <h4>Coupon Discount</h4>
+                                <h4 class="price">(-) ₹{{ discount_amount|floatformat:2 }}</h4>
+                              </li>
+                              {% endif %}
+                              <li>
+                                <h4>Shipping</h4>
+                                <h4 class="price">
+                                  {% if shipping_total == 0 and subtotal >= 5000 %}
+                                    Free
+                                  {% else %}
+                                    ₹{{ shipping_total|floatformat:2 }}
+                                  {% endif %}
+                                </h4>
+                              </li> 
+                              <li class="list-total">
+                                  <h4>Total <span>(Inc.of gst)</span></h4>
+                                  <h4 class="price">₹{{ total|floatformat:2 }}</h4>
+                              </li>
+                          </ul>
+                      </div>
+                      <div class="checkout-offer">
+                        <p>By clicking "Complete Order", you agree to our <a href="/terms-and-conditions/" target="_blank">Terms & Conditions</a> and <a href="/privacy-policy/" target="_blank">Privacy Policy</a>.</p>
+                      </div>
+
+                      <button type="button" id="rzp-button" class="btn theme-bg-color text-white btn-md w-100 mt-4 fw-bold">Complete Order</button>
+                  </div>
+              </div>
+            </div>
+          </div>
+        </form> 
+      </div>
+    </div>
+</section>
+<!-- Checkout section End -->
+
+{% endblock %} {% block js %}
+<!-- ✅ diffrent two block Script -->
+<script>
+  document
+    .getElementById("save-and-pay-btn")
+    .addEventListener("click", function () {
+      // Hide address form and show payment options
+      document.getElementById("address-section").style.display = "none";
+      document.getElementById("payment-section").style.display = "block";
+
+      // Optional scroll to payment block
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+</script>
+<!-- ✅ pincode fatch Script -->
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const pincodeInput = document.getElementById("pincode");
+    const cityInput = document.getElementById("city");
+    const stateInput = document.getElementById("state");
+    pincodeInput.addEventListener("blur", function () {
+      const pincode = pincodeInput.value.trim();
+      if (pincode.length === 6 && /^\d+$/.test(pincode)) {
+        fetch(`https://api.postalpincode.in/pincode/${pincode}`)
+          .then((res) => res.json())
+          .then((data) => {
+            const info = data[0];
+            if (info.Status === "Success" && info.PostOffice.length > 0) {
+              const postOffice = info.PostOffice[0];
+              cityInput.value = postOffice.District || "";
+              stateInput.value = postOffice.State || "";
+            } else {
+              alert("Invalid Pincode. Please check and try again.");
+            }
+          })
+          .catch(() => alert("Error fetching pincode data."));
+      }
+    });
+  });
+</script>
+<!-- ✅ address fatch Script -->
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const savePayBtn = document.getElementById("save-and-pay-btn");
+
+    if (savePayBtn) {
+      savePayBtn.addEventListener("click", function (event) {
+        event.preventDefault(); // Block default behavior
+
+        // Get form values
+        const name = document.querySelector('input[name="name"]').value.trim();
+        const phone = document
+          .querySelector('input[name="phone"]')
+          .value.trim();
+        const email = document
+          .querySelector('input[name="email"]')
+          .value.trim();
+        const address = document
+          .querySelector('input[name="address"]')
+          .value.trim();
+        const city = document.querySelector('input[name="city"]').value.trim();
+        const pincode = document
+          .querySelector('input[name="pincode"]')
+          .value.trim();
+        const state = document
+          .querySelector('input[name="state"]')
+          .value.trim();
+
+        // Condition check
+        const anyEmpty =
+          !name || !phone || !email || !address || !city || !pincode || !state;
+
+        if (anyEmpty) {
+          alert("Please fill all required fields before proceeding.");
+
+          // ✅ Forcefully ensure payment section hidden
+          document.getElementById("payment-section").style.display = "none";
+          document.getElementById("address-section").style.display = "block";
+          return;
+        }
+
+        // ✅ All valid: Show payment section
+        document.getElementById("address-section").style.display = "none";
+        document.getElementById("payment-section").style.display = "block";
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      });
+    }
+  });
+</script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const savePayBtn = document.getElementById("save-and-pay-btn");
+    const editBtn = document.getElementById("edit-address");
+
+    savePayBtn.addEventListener("click", function (event) {
+      event.preventDefault();
+
+      const name = document.querySelector('input[name="name"]').value.trim();
+      const phone = document.querySelector('input[name="phone"]').value.trim();
+      const email = document.querySelector('input[name="email"]').value.trim();
+      const address = document.querySelector('input[name="address"]').value.trim();
+      const city = document.querySelector('input[name="city"]').value.trim();
+      const pincode = document.querySelector('input[name="pincode"]').value.trim();
+      const state = document.querySelector('input[name="state"]').value.trim();
+
+      const anyEmpty = !name || !phone || !email || !address || !city || !pincode || !state;
+
+      if (anyEmpty) {
+        alert("Please fill all required fields before proceeding.");
+        return;
+      }
+
+      // ✅ Fill data in delivery address card
+      document.getElementById("display-name").innerText = name;
+      document.getElementById("display-address").innerText = `${address}, ${city}, ${state}`;
+      document.getElementById("display-pincode").innerText = pincode;
+      document.getElementById("display-phone").innerText = phone;
+
+      // ✅ Switch sections
+      document.getElementById("address-section").style.display = "none";
+      document.getElementById("payment-section").style.display = "block";
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+
+    editBtn.addEventListener("click", function () {
+      // ✅ Show address form again
+      document.getElementById("payment-section").style.display = "none";
+      document.getElementById("address-section").style.display = "block";
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+  });
+</script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const allFields = [
+      "name",
+      "phone",
+      "email",
+      "address",
+      "pincode",
+      "city",
+      "state"
+    ];
+
+    let isPrefilled = true;
+    let formData = {};
+
+    allFields.forEach(field => {
+      const value = localStorage.getItem("checkout_" + field);
+      if (!value) isPrefilled = false;
+      formData[field] = value;
+    });
+
+    if (isPrefilled) {
+      // Auto-fill form
+      allFields.forEach(field => {
+        const input = document.querySelector(`input[name="${field}"]`);
+        if (input) input.value = formData[field];
+      });
+
+      // Fill delivery card
+      document.getElementById("display-name").innerText = formData.name;
+      document.getElementById("display-address").innerText =
+        `${formData.address}, ${formData.city}, ${formData.state}`;
+      document.getElementById("display-pincode").innerText = formData.pincode;
+      document.getElementById("display-phone").innerText = formData.phone;
+
+      // Switch section
+      document.getElementById("address-section").style.display = "none";
+      document.getElementById("payment-section").style.display = "block";
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  });
+</script>
+<!-- ✅ address save localstorage Script -->
+<script>
+  // ✅ Restore data from localStorage if available
+  document.addEventListener("DOMContentLoaded", function () {
+    const fields = [
+      "name",
+      "phone",
+      "email",
+      "address",
+      "pincode",
+      "city",
+      "state",
+    ];
+    fields.forEach((field) => {
+      const storedValue = localStorage.getItem("checkout_" + field);
+      if (storedValue) {
+        document.querySelector(`input[name="${field}"]`).value = storedValue;
+      }
+    });
+  });
+
+  // ✅ Save data to localStorage when Save & Pay is clicked
+  document
+    .getElementById("save-and-pay-btn")
+    .addEventListener("click", function () {
+      const fields = [
+        "name",
+        "phone",
+        "email",
+        "address",
+        "pincode",
+        "city",
+        "state",
+      ];
+      fields.forEach((field) => {
+        const value = document
+          .querySelector(`input[name="${field}"]`)
+          .value.trim();
+        localStorage.setItem("checkout_" + field, value);
+      });
+    });
+
+  // ✅ Optional: Clear localStorage after successful form submission
+  const rzpButton = document.getElementById("rzp-button");
+  if (rzpButton) {
+    rzpButton.addEventListener("click", function () {
+      // Assuming order is being placed now
+      const fields = [
+        "name",
+        "phone",
+        "email",
+        "address",
+        "pincode",
+        "city",
+        "state",
+      ];
+      fields.forEach((field) => {
+        localStorage.removeItem("checkout_" + field);
+      });
+    });
+  }
+</script>
+<!-- ✅ cartwatch logic Script -->
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const phoneInput = document.querySelector('input[name="phone"]');
+    const nameInput = document.querySelector('input[name="name"]');
+
+    let lastSavedPhone = "";
+
+    phoneInput.addEventListener("blur", function () {
+      const phone = phoneInput.value.trim();
+      const name = nameInput ? nameInput.value.trim() : "";
+
+      // Only send if phone is filled and not same as last time
+      if (phone && phone !== lastSavedPhone) {
+        fetch("/cartwatch/save-lead/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+            "X-CSRFToken": "{{ csrf_token }}",
+          },
+          body: new URLSearchParams({
+            phone: phone,
+            name: name,
+          }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            console.log("Lead saved:", data);
+            lastSavedPhone = phone; // prevent duplicate saves
+          })
+          .catch((error) => {
+            console.error("Error saving lead:", error);
+          });
+      }
+    });
+  });
+</script>
+<!-- ✅ checkout payment and order place logic Script -->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const rzpButton = document.getElementById('rzp-button');
+  const form = document.getElementById('checkout-form');
+
+  if (rzpButton) {
+    rzpButton.addEventListener("click", function () {
+      const selected = document.querySelector('input[name="payment_method"]:checked').value;
+
+      if (selected === 'payu_upi') {
+        // ✅ NEW: PayU UPI-only
+        form.action = "/payu-initiate-upi/";
+        form.method = "POST";
+        form.submit();
+        return;
+      }
+
+      if (selected === 'payu') {
+        // Redirect to PayU initiate (all methods)
+        form.action = "/payu-initiate/";
+        form.method = "POST";
+        form.submit();
+        return;
+      }
+
+      // Razorpay / COD Flow
+      const total = {{ total|floatformat:2 }};
+      const amount = selected === 'cod' ? Math.round(total * 0.20 * 100) : Math.round(total * 100);
+
+      const options = {
+        key: "{{ razorpay_key }}",
+        amount: amount,
+        currency: "INR",
+        name: "Quesec Rides",
+        description: "Order Payment",
+        image: "{% static 'logo.png' %}",
+        handler: function (response) {
+          const razorpayInput = document.createElement('input');
+          razorpayInput.type = 'hidden';
+          razorpayInput.name = 'transaction_id';
+          razorpayInput.value = response.razorpay_payment_id;
+          form.appendChild(razorpayInput);
+
+          const methodInput = document.createElement('input');
+          methodInput.type = 'hidden';
+          methodInput.name = 'payment_method';
+          methodInput.value = selected;
+          form.appendChild(methodInput);
+
+          form.action = '/save-order/';
+          form.method = 'POST';
+          form.submit();
+        },
+        theme: { color: "#000000" }
+      };
+
+      const rzp = new Razorpay(options);
+      rzp.open();
+    });
+  }
+});
+</script>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const codRadio = document.getElementById('pay_cod');
+  const collapseEl = document.getElementById('codCollapse');
+  if (!collapseEl || !codRadio) return;
+
+  const codToggleBtn = document.querySelector('.pay-toggle[data-bs-target="#codCollapse"]');
+  // Bootstrap 5 collapse controller
+  const bsCollapse = new bootstrap.Collapse(collapseEl, { toggle: false });
+
+  // Radio change par auto open/close
+  document.querySelectorAll('input[name="payment_method"]').forEach(r => {
+    r.addEventListener('change', () => {
+      if (codRadio.checked) {
+        bsCollapse.show();
+        if (codToggleBtn) codToggleBtn.setAttribute('aria-expanded', 'true');
+      } else {
+        bsCollapse.hide();
+        if (codToggleBtn) codToggleBtn.setAttribute('aria-expanded', 'false');
+      }
+    });
+  });
+});
+</script>
+
+
+
+{% endblock %}

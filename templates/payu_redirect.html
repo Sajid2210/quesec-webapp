@@ -1,0 +1,25 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Redirecting to PayU...</title>
+</head>
+<body onload="document.forms['payuForm'].submit();">
+    <h3 style="text-align:center;">Please wait, redirecting to secure PayU payment page...</h3>
+
+    <form id="payuForm" name="payuForm" action="{{ payu_url }}" method="post">
+        <input type="hidden" name="cart_json" value="{{ cart_json }}">
+        <input type="hidden" name="key" value="{{ payu_key }}">
+        <input type="hidden" name="txnid" value="{{ txnid }}">
+        <input type="hidden" name="amount" value="{{ amount }}">
+        <input type="hidden" name="productinfo" value="{{ productinfo }}">
+        <input type="hidden" name="firstname" value="{{ name }}">
+        <input type="hidden" name="email" value="{{ email }}">
+        <input type="hidden" name="phone" value="{{ phone }}">
+        <input type="hidden" name="surl" value="{{ surl }}">
+        <input type="hidden" name="furl" value="{{ furl }}">
+        <input type="hidden" name="hash" value="{{ payu_hash }}">
+    </form>
+</body>
+</html>
