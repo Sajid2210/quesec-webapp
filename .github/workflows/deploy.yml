@@ -1,31 +1,27 @@
-name: Deploy to EC2
+name: deploy
 
 on:
   push:
-    branches: ["main"]   # main par push -> deploy
-
-concurrency:
-  group: deploy-ec2
-  cancel-in-progress: true
+    branches: [ main ]
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout
+      - name: Checkout (for logs only)
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: SSH to EC2 and run deploy.sh
-        uses: appleboy/ssh-action@v1.2.0
+        uses: appleboy/ssh-action@v1.0.0
         with:
           host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}         # ubuntu
-          key: ${{ secrets.EC2_SSH_KEY }}           # PEM private key ka content
-          script_stop: true
-          command_timeout: 30m
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          port: 22
           script: |
-            export BRANCH="${{ secrets.DEPLOY_BRANCH || 'main' }}"
-            bash /var/www/quesecrides/deploy/deploy.sh
+            set -e
+            # Always use bash -lc to load proper PATH
+            bash -lc '
+              chmod +x /var/www/quesecrides/deploy.sh
+              /var/www/quesecrides/deploy.sh
+            '
