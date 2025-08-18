@@ -10,21 +10,73 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout (for metadata only)
-        uses: actions/checkout@v4
+      - name: Echo env (debug)
+        run: |
+          echo "Starting deploy…"
 
-      - name: SSH to EC2 and run deploy.sh
+      - name: SSH to EC2 and run deploy (idempotent)
         uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           port: ${{ secrets.EC2_PORT || 22 }}
           key: ${{ secrets.EC2_SSH_KEY }}
+          script_stop: true
           script: |
             set -euo pipefail
-            bash /var/www/quesecrides/deploy.sh
+            export PROJECT_DIR="/var/www/quesecrides"
+
+            # 0) Ensure base dir exists
+            sudo mkdir -p "$PROJECT_DIR"
+            sudo chown -R $USER:www-data "$PROJECT_DIR"
+
+            # 1) Place/Update deploy.sh every run (so 'file not found' kabhi na aaye)
+            cat > "$PROJECT_DIR/deploy.sh" <<'BASH'
+            #!/usr/bin/env bash
+            set -euo pipefail
+
+            PROJECT_DIR="/var/www/quesecrides"
+            VENV_DIR="$PROJECT_DIR/venv"
+            PY="$VENV_DIR/bin/python"
+
+            echo "==[1/5] Ensure venv =="
+            if [ ! -d "$VENV_DIR" ]; then
+              python3 -m venv "$VENV_DIR"
+            fi
+            chmod 755 "$VENV_DIR/bin/python" || true
+            chmod 755 "$VENV_DIR/bin/pip" || true
+
+            echo "==[2/5] Pull latest code =="
+            cd "$PROJECT_DIR"
+            if [ ! -d .git ]; then
+              git clone https://github.com/${GITHUB_REPOSITORY}.git "$PROJECT_DIR"
+              git remote set-url origin "https://github.com/${GITHUB_REPOSITORY}.git"
+            fi
+            git fetch --all --prune
+            git reset --hard origin/main
+
+            echo "==[3/5] Install dependencies =="
+            "$PY" -m pip install --upgrade pip
+            if [ -f "$PROJECT_DIR/requirements.txt" ]; then
+              "$PY" -m pip install -r requirements.txt
+            fi
+
+            echo "==[4/5] Django migrate (no collectstatic) =="
+            export DJANGO_SETTINGS_MODULE="quesecrides.settings"
+            export PYTHONPATH="$PROJECT_DIR"
+            "$PY" manage.py migrate --noinput
+
+            echo "==[5/5] Restart services =="
+            sudo systemctl restart gunicorn
+            sudo systemctl reload nginx
+            echo "✅ Deploy finished (without collectstatic)."
+            BASH
+
+            sudo chmod +x "$PROJECT_DIR/deploy.sh"
+
+            # 2) Run it
+            bash "$PROJECT_DIR/deploy.sh"
