@@ -35,7 +35,7 @@ INSTALLED_APPS = [
     "blog",
     "pages",
     "contact",
-    # S3 storage
+    # S3 storage for MEDIA
     "storages",
 ]
 
@@ -89,8 +89,6 @@ if DB_ENGINE:
             "PASSWORD": config("DB_PASSWORD"),
             "HOST": config("DB_HOST"),
             "PORT": config("DB_PORT", default="5432"),
-            # Optional SSL (enable on production once certs are sorted)
-            # "OPTIONS": {"sslmode": "require"},
         }
     }
 else:
@@ -116,21 +114,20 @@ USE_I18N = True
 USE_L10N = True
 USE_TZ = False
 
-# ── Static ────────────────────────────────────────────────────────────────────
+# ── Static (WhiteNoise) ───────────────────────────────────────────────────────
+# NOTE: STATIC_ROOT should be a dedicated build folder, not your source static.
 STATIC_URL = "/static/"
-STATIC_ROOT = BASE_DIR / "static"  
-STATICFILES_DIRS = []
+STATIC_ROOT = BASE_DIR / "staticfiles"  # collectstatic output
+STATICFILES_DIRS = [BASE_DIR / "quesecrides" / "static"]  # your theme/source
 
-# Django 5: STORAGES must define 'staticfiles'; 'default' depends on S3 flag
+# Django 5 STORAGES: keep static on WhiteNoise, media on S3 (when configured)
 USE_S3_MEDIA = bool(config("AWS_STORAGE_BUCKET_NAME", default=""))
 if USE_S3_MEDIA:
     STORAGES = {
-        "default": {
-            "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
-        },
-        "staticfiles": {
-            "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
-        },
+        # MEDIA goes to S3
+        "default": {"BACKEND": "storages.backends.s3boto3.S3Boto3Storage"},
+        # STATIC served by WhiteNoise with hashed filenames
+        "staticfiles": {"BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"},
     }
 
     AWS_ACCESS_KEY_ID = config("AWS_ACCESS_KEY_ID", default="")
@@ -138,16 +135,12 @@ if USE_S3_MEDIA:
     AWS_STORAGE_BUCKET_NAME = config("AWS_STORAGE_BUCKET_NAME", default="")
     AWS_S3_REGION_NAME = config("AWS_S3_REGION_NAME", default="ap-south-1")
 
-    # Important: region-specific virtual hosted endpoint to avoid Signature mismatch
+    # Prefer region-specific virtual-hosted style endpoint
     _region = AWS_S3_REGION_NAME or "ap-south-1"
     _bucket = AWS_STORAGE_BUCKET_NAME
     _custom_from_env = config("AWS_S3_CUSTOM_DOMAIN", default="")
-    if _custom_from_env:
-        _s3_domain = _custom_from_env
-    else:
-        _s3_domain = f"{_bucket}.s3.{_region}.amazonaws.com" if _bucket else ""
+    _s3_domain = _custom_from_env or (f"{_bucket}.s3.{_region}.amazonaws.com" if _bucket else "")
 
-    # Hardening / sane defaults
     AWS_QUERYSTRING_AUTH = False
     AWS_S3_FILE_OVERWRITE = False
     AWS_DEFAULT_ACL = None
@@ -159,12 +152,8 @@ if USE_S3_MEDIA:
     MEDIA_ROOT = ""  # not used on disk
 else:
     STORAGES = {
-        "default": {
-            "BACKEND": "django.core.files.storage.FileSystemStorage",
-        },
-        "staticfiles": {
-            "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
-        },
+        "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+        "staticfiles": {"BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"},
     }
     MEDIA_URL = "/media/"
     MEDIA_ROOT = os.path.join(BASE_DIR, "media")
@@ -176,11 +165,11 @@ AUTH_USER_MODEL = "accounts.CustomUser"
 CKEDITOR_5_CONFIGS = {
     "default": {
         "toolbar": [
-            "heading","|","bold","italic","link","underline","|",
-            "numberedList","bulletedList","|","blockQuote","codeBlock","|",
-            "undo","redo"
+            "heading", "|", "bold", "italic", "link", "underline", "|",
+            "numberedList", "bulletedList", "|", "blockQuote", "codeBlock", "|",
+            "undo", "redo"
         ],
-        "height": "300px","width": "100%","language": "en",
+        "height": "300px", "width": "100%", "language": "en",
     },
     "basic": {"toolbar": ["bulletedList"], "height": "100px", "width": "100%", "language": "en"},
 }
