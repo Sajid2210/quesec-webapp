@@ -1,11 +1,12 @@
-name: Deploy to EC2
+name: deploy
 
 on:
   push:
-    branches: ["main"]   # main par push -> deploy
+    branches: [ "main" ]
+  workflow_dispatch:
 
 concurrency:
-  group: deploy-ec2
+  group: deploy-quesecrides
   cancel-in-progress: true
 
 jobs:
@@ -13,19 +14,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: Checkout (for metadata only)
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: SSH to EC2 and run deploy.sh
         uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}         # ubuntu
-          key: ${{ secrets.EC2_SSH_KEY }}           # PEM private key ka content
-          script_stop: true
-          command_timeout: 30m
+          username: ${{ secrets.EC2_USER }}
+          port: ${{  22 }}
+          key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            export BRANCH="${{ secrets.DEPLOY_BRANCH || 'main' }}"
-            bash /var/www/quesecrides/deploy/deploy.sh
+            set -euo pipefail
+            bash /var/www/quesecrides/deploy.sh
