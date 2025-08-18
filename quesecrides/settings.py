@@ -132,6 +132,31 @@ if USE_S3_MEDIA:
             "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
         },
     }
+
+    AWS_ACCESS_KEY_ID = config("AWS_ACCESS_KEY_ID", default="")
+    AWS_SECRET_ACCESS_KEY = config("AWS_SECRET_ACCESS_KEY", default="")
+    AWS_STORAGE_BUCKET_NAME = config("AWS_STORAGE_BUCKET_NAME", default="")
+    AWS_S3_REGION_NAME = config("AWS_S3_REGION_NAME", default="ap-south-1")
+
+    # Important: region-specific virtual hosted endpoint to avoid Signature mismatch
+    _region = AWS_S3_REGION_NAME or "ap-south-1"
+    _bucket = AWS_STORAGE_BUCKET_NAME
+    _custom_from_env = config("AWS_S3_CUSTOM_DOMAIN", default="")
+    if _custom_from_env:
+        _s3_domain = _custom_from_env
+    else:
+        _s3_domain = f"{_bucket}.s3.{_region}.amazonaws.com" if _bucket else ""
+
+    # Hardening / sane defaults
+    AWS_QUERYSTRING_AUTH = False
+    AWS_S3_FILE_OVERWRITE = False
+    AWS_DEFAULT_ACL = None
+    AWS_S3_SIGNATURE_VERSION = "s3v4"
+    AWS_S3_ADDRESSING_STYLE = "virtual"
+    AWS_S3_OBJECT_PARAMETERS = {"CacheControl": "max-age=86400"}
+
+    MEDIA_URL = f"https://{_s3_domain}/"
+    MEDIA_ROOT = ""  # not used on disk
 else:
     STORAGES = {
         "default": {
@@ -141,24 +166,6 @@ else:
             "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
         },
     }
-
-# ── Media ─────────────────────────────────────────────────────────────────────
-if USE_S3_MEDIA:
-    AWS_ACCESS_KEY_ID = config("AWS_ACCESS_KEY_ID", default="")
-    AWS_SECRET_ACCESS_KEY = config("AWS_SECRET_ACCESS_KEY", default="")
-    AWS_STORAGE_BUCKET_NAME = config("AWS_STORAGE_BUCKET_NAME", default="")
-    AWS_S3_REGION_NAME = config("AWS_S3_REGION_NAME", default="ap-south-1")
-    AWS_QUERYSTRING_AUTH = False
-    AWS_S3_FILE_OVERWRITE = False
-    AWS_DEFAULT_ACL = None
-    AWS_S3_SIGNATURE_VERSION = "s3v4"
-    _s3_domain = config(
-        "AWS_S3_CUSTOM_DOMAIN",
-        default=f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com" if AWS_STORAGE_BUCKET_NAME else "",
-    )
-    MEDIA_URL = f"https://{_s3_domain}/"
-    MEDIA_ROOT = ""  # not used on disk
-else:
     MEDIA_URL = "/media/"
     MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
