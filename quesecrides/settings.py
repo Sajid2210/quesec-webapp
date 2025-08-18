@@ -118,8 +118,8 @@ USE_TZ = False
 
 # ── Static ────────────────────────────────────────────────────────────────────
 STATIC_URL = "/static/"
-STATIC_ROOT = BASE_DIR / "staticfiles"
-STATICFILES_DIRS = [BASE_DIR / "quesecrides" / "static"]
+STATIC_ROOT = BASE_DIR / "static"  
+STATICFILES_DIRS = []
 
 # Django 5: STORAGES must define 'staticfiles'; 'default' depends on S3 flag
 USE_S3_MEDIA = bool(config("AWS_STORAGE_BUCKET_NAME", default=""))
