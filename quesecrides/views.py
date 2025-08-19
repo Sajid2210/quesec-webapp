@@ -1,180 +1,243 @@
-# /quesecrides/views.py
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import JsonResponse
-from django.conf import settings
 from bicycles.models import Product
+from django.utils.timezone import now
 from coupons.models import Coupon
+from django.conf import settings
 
-# -----------------------------
-# Helpers
-# -----------------------------
-def _get_cart(request):
-    """
-    Session cart structure:
-    request.session['cart'] = {
-        "<product_id>": <qty:int>
-    }
-    """
+
+
+def home(request):
+    return render(request, 'index.html')
+
+def custom_page_not_found(request, exception):
+    return render(request, '404.html', status=404)
+
+def custom_server_error(request):
+    # templates/500.html required
+    return render(request, "500.html", status=500)
+
+def add_to_cart(request, product_id):
+    print("Product ID Received:", product_id)
+    try:
+        product = Product.objects.get(id=product_id)
+        print("Product Found:", product.title)
+
+        cart = request.session.get('cart', {})
+        if str(product_id) in cart:
+            return redirect('view_cart')
+
+        cart[str(product_id)] = 1
+        request.session['cart'] = cart
+
+        return redirect('view_cart')  # ✅ this is what was missing
+    except Product.DoesNotExist:
+        print("Product with ID does not exist:", product_id)
+        return redirect('shop-page')
+
+def view_cart(request):
     cart = request.session.get('cart', {})
-    # normalize keys to str and qty to int
-    normalized = {}
-    for k, v in cart.items():
-        try:
-            qty = int(v)
-        except (TypeError, ValueError):
-            qty = 1
-        normalized[str(k)] = max(1, qty)
-    request.session['cart'] = normalized
-    return normalized
-
-def _compute_totals(request, cart):
-    """
-    Returns dict with all totals the templates expect.
-    - Uses Product.price and Product.discount_price
-    - Applies coupon stored in session (percentage) **only** on applicable product ids
-    - Free shipping for subtotal >= 5000
-    """
+    # ✅ If cart is empty, clear coupon info from session
+    if not cart:
+        request.session.pop('coupon_code', None)
+        request.session.pop('coupon_discount', None)
+        request.session.pop('coupon_product_ids', None)
     cart_items = []
     subtotal = 0
     cart_total = 0
-    shipping_total = 199  # default shipping; will be zeroed on threshold
-    product_discount = 0  # price - discount_price total
+    product_discount = 0
     discount_amount = 0
+    shipping_total = 0
 
-    # coupon session info
     coupon_code = request.session.get('coupon_code')
-    coupon_discount = float(request.session.get('coupon_discount', 0))  # percentage like 10 for 10%
-    coupon_product_ids = set(str(x) for x in request.session.get('coupon_product_ids', []))
+    coupon_discount = request.session.get('coupon_discount', 0)
+    coupon_product_ids = request.session.get('coupon_product_ids', [])
 
-    # build items
     for product_id, qty in cart.items():
         product = get_object_or_404(Product, id=product_id)
-        qty = int(qty)
-
-        # guard for missing discount_price
-        item_price = float(product.price or 0) * qty
-        item_discount_price = float(product.discount_price or product.price or 0) * qty
-
-        cart_total += item_price
-        subtotal += item_discount_price
+        cart_price_total = product.price * qty
+        cart_total += cart_price_total
+        item_total = product.discount_price * qty
+        subtotal += item_total
         product_discount = cart_total - subtotal
 
+        shipping_total += product.shipping_charge * qty
+
+        # ✅ Apply discount only if product is eligible
+        if int(product_id) in coupon_product_ids:
+            item_discount = item_total * coupon_discount / 100
+            discount_amount += item_discount
+        else:
+            item_discount = 0
+
         cart_items.append({
-            "product": product,
-            "qty": qty,
-            "subtotal": item_discount_price,        # discounted subtotal for this line
-            "product_total_price": item_price,      # MRP subtotal for this line
+            'product': product,
+            'qty': qty,
+            'subtotal': item_total,
+            'cart_total': cart_price_total,
+            'product_discount': product_discount,
+            'discount': item_discount,
         })
 
-    # coupon calculation (percentage on eligible items)
-    if coupon_code and coupon_discount > 0:
-        eligible_subtotal = 0.0
-        if coupon_product_ids:
-            # only selected products
-            for product_id, qty in cart.items():
-                if str(product_id) in coupon_product_ids:
-                    p = get_object_or_404(Product, id=product_id)
-                    eligible_subtotal += float(p.discount_price or p.price or 0) * int(qty)
-        else:
-            # all products
-            eligible_subtotal = float(subtotal)
-
-        discount_amount = round((eligible_subtotal * (coupon_discount / 100.0)), 2)
-
-    # shipping free over threshold
+    # ✅ Free shipping above ₹5000
     if subtotal >= 5000:
         shipping_total = 0
 
-    final_total = round(subtotal - discount_amount + shipping_total, 2)
+    final_total = subtotal - discount_amount + shipping_total
 
-    return {
-        "cart_items": cart_items,
-        "subtotal": round(subtotal, 2),
-        "cart_total": round(cart_total, 2),
-        "product_discount": round(product_discount, 2),
-        "coupon_code": coupon_code,
-        "coupon_discount": coupon_discount,
-        "discount_amount": round(discount_amount, 2),
-        "shipping_total": shipping_total,
-        "total": final_total,
+    # ✅ Get active coupons
+    product_ids = list(map(int, cart.keys()))
+    active_coupons = Coupon.objects.filter(
+        active=True,
+        public=True,
+        valid_from__lte=now(),
+        valid_to__gte=now(),
+        applicable_products__id__in=product_ids
+    ).distinct().order_by('-discount_percent')
+    cart_product_ids = list(map(int, cart.keys()))
+
+    context = {
+        'cart_items': cart_items,
+        'subtotal': subtotal,
+        'cart_total': cart_total,
+        'product_discount': product_discount,
+        'coupon_code': coupon_code,
+        'coupon_discount': coupon_discount,
+        'discount_amount': discount_amount,
+        'shipping_total': shipping_total,
+        'total': final_total,
+        'active_coupons': active_coupons,
+        'cart_product_ids': cart_product_ids,
     }
 
-# -----------------------------
-# Pages / Views
-# -----------------------------
-def home(request):
-    return render(request, "index.html")
-
-def custom_page_not_found(request, exception):
-    return render(request, "404.html", status=404)
-
-def custom_server_error(request):
-    # optional: show a simple page
-    return render(request, "500.html", status=500)
-
-# ---- CART ----
-def add_to_cart(request, product_id):
-    product = get_object_or_404(Product, id=product_id)  # ensure exists
-    cart = _get_cart(request)
-    cart[str(product.id)] = cart.get(str(product.id), 0) + 1
-    request.session["cart"] = cart
-    return redirect("view_cart")
-
-def remove_from_cart(request, product_id):
-    cart = _get_cart(request)
-    pid = str(product_id)
-    if pid in cart:
-        del cart[pid]
-        request.session["cart"] = cart
-    return redirect("view_cart")
-
-def view_cart(request):
-    cart = _get_cart(request)
-    # If cart empty, clear coupon session
-    if not cart:
-        request.session.pop("coupon_code", None)
-        request.session.pop("coupon_discount", None)
-        request.session.pop("coupon_product_ids", None)
-
-    totals = _compute_totals(request, cart)
-    context = {**totals}
-    return render(request, "cart.html", context)
+    return render(request, 'cart.html', context)
 
 def update_qty(request):
-    """
-    Ajax or form POST to update line quantities,
-    then render checkout again (same totals variables).
-    """
-    if request.method == "POST":
-        product_id = str(request.POST.get("product_id"))
-        try:
-            new_qty = int(request.POST.get("qty", 1))
-        except (TypeError, ValueError):
-            new_qty = 1
+    if request.method == 'POST':
+        product_id = request.POST.get('product_id')
+        new_qty = int(request.POST.get('qty'))
 
-        cart = _get_cart(request)
+        cart = request.session.get('cart', {})
+
         if product_id in cart:
             if new_qty <= 0:
                 del cart[product_id]
             else:
                 cart[product_id] = new_qty
-            request.session["cart"] = cart
+            request.session['cart'] = cart
 
-    totals = _compute_totals(request, _get_cart(request))
-    context = {**totals, "razorpay_key": getattr(settings, "RAZORPAY_KEY", "")}
-    return render(request, "checkout.html", context)
+        # Recalculate totals
+        cart_items = []
+        subtotal = 0
+        discount_amount = 0
+        cart_total = 0
+        product_discount = 0
+        shipping_total = 0
+        coupon_code = request.session.get('coupon_code')
+        coupon_discount = request.session.get('coupon_discount', 0)
+        coupon_product_ids = request.session.get('coupon_product_ids', [])
 
-# ---- CHECKOUT ----
+        for pid, qty in cart.items():
+            product = get_object_or_404(Product, id=pid)
+            cart_price_total = product.price * qty
+            cart_total += cart_price_total
+            item_total = product.discount_price * qty
+            subtotal += item_total
+            product_discount = cart_total - subtotal
+            shipping_total += product.shipping_charge * qty
+
+            if int(pid) in coupon_product_ids:
+                item_discount = item_total * coupon_discount / 100
+                discount_amount += item_discount
+
+        # ✅ Free shipping above ₹5000
+        if subtotal >= 5000:
+            shipping_total = 0
+
+        final_total = subtotal - discount_amount + shipping_total
+        request.session.pop('coupon_code', None)
+        request.session.pop('coupon_discount', None)
+
+        return JsonResponse({
+            'success': True,
+            'subtotal': f"{subtotal:.2f}",
+            'discount': f"{discount_amount:.2f}",
+            'total': f"{final_total:.2f}",
+            'cart_total': f"{cart_total:.2f}",               
+            'product_discount': f"{product_discount:.2f}",
+            'shipping': f"{shipping_total:.2f}",
+        })
+
+    return JsonResponse({'success': False})
+
+def remove_from_cart(request, product_id):
+    cart = request.session.get('cart', {})
+
+    if str(product_id) in cart:
+        del cart[str(product_id)]
+        request.session['cart'] = cart
+
+    return redirect('view_cart')
+
 def checkout_page(request):
-    cart = _get_cart(request)
-    # redirect if empty
-    if not cart:
-        return redirect("home")
+    cart = request.session.get('cart', {})
 
-    totals = _compute_totals(request, cart)
+    # ✅ Redirect if cart is empty
+    if not cart:
+        return redirect('home')
+
+    cart_items = []
+    subtotal = 0
+    cart_total = 0
+    product_discount = 0
+    discount_amount = 0
+    shipping_total = 0
+
+    coupon_code = request.session.get('coupon_code')
+    coupon_discount = request.session.get('coupon_discount', 0)
+    coupon_product_ids = request.session.get('coupon_product_ids', [])
+
+    for product_id, qty in cart.items():
+        product = get_object_or_404(Product, id=product_id)
+        cart_price_total = product.price * qty
+        cart_total += cart_price_total
+        item_total = product.discount_price * qty
+        item_price = product.price * qty
+        subtotal += item_total
+        product_discount = cart_total - subtotal
+
+        shipping_total += product.shipping_charge * qty
+
+        if int(product_id) in coupon_product_ids:
+            item_discount = item_total * coupon_discount / 100
+            discount_amount += item_discount
+
+        cart_items.append({
+            'product': product,
+            'qty': qty,
+            'subtotal': item_total,
+            'product_total_price': item_price,
+        })
+
+    if subtotal >= 5000:
+        shipping_total = 0
+
+    final_total = subtotal - discount_amount + shipping_total
 
     context = {
-        **totals,
-        "razorpay_key": getattr(settings, "RAZORPAY_KEY", ""),
+        'cart_items': cart_items,
+        'subtotal': subtotal,
+        'cart_total': cart_total,
+        'product_discount': product_discount,
+        'coupon_code': coupon_code,
+        'coupon_discount': coupon_discount,
+        'discount_amount': discount_amount,
+        'shipping_total': shipping_total,
+        'total': final_total,
+        'razorpay_key': settings.RAZORPAY_KEY, 
     }
-    return render(request, "checkout.html", context)
+
+    return render(request, 'checkout.html', context)
+
+
+    
