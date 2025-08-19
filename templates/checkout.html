@@ -839,7 +839,7 @@ document.addEventListener("DOMContentLoaded", function () {
         currency: "INR",
         name: "Quesec Rides",
         description: "Order Payment",
-        image: "{% static 'logo.png' %}",
+        image: "{{ site_settings.favicon.url }}",
         handler: function (response) {
           const razorpayInput = document.createElement('input');
           razorpayInput.type = 'hidden';
