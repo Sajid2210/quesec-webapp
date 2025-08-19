@@ -28,7 +28,7 @@ urlpatterns = [
     path("cart/", views.view_cart, name="view_cart"),
     path("update-qty/", views.update_qty, name="update_qty"),
     path("remove-from-cart/<int:product_id>/", views.remove_from_cart, name="remove_from_cart"),
-    path("cart/checkout/", views.checkout_page, name="checkout_page"),
+    path("checkout/", views.checkout_page, name="checkout_page"),
 
     # Apps include
     path("cartwatch/", include("cartwatch.urls")),
