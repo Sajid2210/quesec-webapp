@@ -4,22 +4,30 @@
   <ul>
     <li class="active">
       <a href="{% url 'home' %}">
-        <i class="iconly-Home icli"></i>
+        <img
+          src="{% static 'assets/images/icon/home.png' %}"
+          class="amazon-icon js-link"
+          alt="Home"
+        />
         <span>Home</span>
       </a>
     </li>
     <li>
       <a href="#search" data-bs-toggle="modal" class="search-box">
-        <i class="iconly-Search icli"></i>
+        <img
+          src="{% static 'assets/images/icon/search.png' %}"
+          class="amazon-icon js-link"
+          alt="search"
+        />
         <span>Search</span>
       </a>
     </li>
-    <li class="mobile-category">
+    <li>
       <a href="javascript:void(0)">
         <img
           src="{% static 'assets/images/icon/category.png' %}"
           class="amazon-icon js-link"
-          alt="Amazon"
+          alt="category"
         />
         <span>Category</span>
       </a>
