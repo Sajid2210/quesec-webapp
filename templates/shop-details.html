@@ -42,17 +42,6 @@
                   class="col-xxl-10 col-lg-12 col-md-10 order-xxl-2 order-lg-1 order-md-2"
                 >
                   <div class="product-main-2 no-arrow">
-                    <div>
-                      <div class="slider-image">
-                        <img
-                          src="{{ product.image.url }}"
-                          id="img-1"
-                          data-zoom-image="{{ product.image.url }}"
-                          class="img-fluid image_zoom_cls-0 blur-up lazyload"
-                          alt=""
-                        />
-                      </div>
-                    </div>
                     {% for img in product.gallery.all %}
                     <div>
                       <div class="slider-image">
@@ -85,15 +74,7 @@
                   <div
                     class="left-slider-image-2 left-slider no-arrow slick-top"
                   >
-                    <div>
-                      <div class="sidebar-image">
-                        <img
-                          src="{{ product.image.url }}"
-                          class="img-fluid blur-up lazyload"
-                          alt=""
-                        />
-                      </div>
-                    </div>
+                    
                     {% for img in product.gallery.all %}
                     <div>
                       <div class="sidebar-image">
